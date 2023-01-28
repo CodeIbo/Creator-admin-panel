@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import LoginScreen from "./Components/login/loginScreen";
+import "./App.css";
+import {  User } from "firebase/auth";
+import { useState } from "react";
+import {  Navigate, Route, Routes  } from "react-router-dom";
+import Dashboard from "./Components/Dashboard/dashboard";
+import PrivateRoutes from "./Components/PrivateRoutes/PrivateRoutes";
+
+
 
 function App() {
+  const [user, setUser] = useState<User | null>(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Routes>
+        <Route path="/login" element={<LoginScreen updateUser={setUser}/>} />
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        <Route element={<PrivateRoutes user={user}/>}>
+          <Route
+            path="/dashboard"
+            element={<Dashboard user={user} setUser={setUser}/>}
+          />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
 export default App;
+

@@ -1,0 +1,19 @@
+@import '../../../scss/variables';
+.nav {
+    background-color: $side-bar-bg;
+    display:flex;
+    flex-direction: column;
+    gap: 2rem;
+    height: 100%;
+    left: 0;
+    padding: 5rem 1.5rem 2rem 1.5rem; 
+    position: fixed; 
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+
+    &__link{
+        cursor: pointer;
+        text-align: center;
+        color: $complementary-font-color;
+        font-weight: 300;
+    }
+}

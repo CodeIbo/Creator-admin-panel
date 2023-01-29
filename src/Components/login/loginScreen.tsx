@@ -1,27 +1,25 @@
 import { useState } from "react";
 import { auth } from "./firebase-config";
-import {
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithCustomToken,
-} from "firebase/auth";
+import { onAuthStateChanged, signInWithCustomToken } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { UserContext } from "../../Context/UserContext";
 
-const LoginScreen = ({ updateUser }: any) => {
+const LoginScreen = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const navigate = useNavigate();
+  const userContext = useContext(UserContext);
 
   onAuthStateChanged(auth, (currentUser) => {
-    let sessionUserUID
-    try{
-        sessionUserUID = JSON.parse(sessionStorage.getItem("user")!);
+    let sessionUserUID;
+    try {
+      sessionUserUID = JSON.parse(sessionStorage.getItem("user")!);
+    } catch {
+      sessionUserUID = null;
     }
-    catch{
-        sessionUserUID = null  
-    }
-    
+
     if (currentUser && currentUser.uid === sessionUserUID) {
       axios
         .post("http://localhost:8888/generate-token", {
@@ -29,7 +27,7 @@ const LoginScreen = ({ updateUser }: any) => {
         })
         .then((response) => {
           signInWithCustomToken(auth, response.data.token).then((response) => {
-            updateUser(response.user);
+            userContext.setUser(response.user);
           });
         })
         .then(() => navigate("/dashboard"));
@@ -38,20 +36,8 @@ const LoginScreen = ({ updateUser }: any) => {
     }
   });
 
-  const login = async () => {
-    await signInWithEmailAndPassword(
-      auth,
-      loginEmail,
-      loginPassword
-    )
-      .then((response) => {
-        updateUser(response.user);
-        sessionStorage.setItem("user", JSON.stringify(response.user.uid));
-        navigate("/dashboard");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const login = () => {
+    userContext.login(auth, loginEmail, loginPassword);
   };
 
   return (

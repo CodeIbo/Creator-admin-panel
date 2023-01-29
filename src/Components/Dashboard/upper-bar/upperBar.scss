@@ -1,0 +1,29 @@
+@import '../../../scss/variables';
+
+.upperBar {
+    background-color: $upper-bar-bg;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 5rem;
+    padding: 0.5rem;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.signboard {
+   background-color: $decoration-bg;
+   border: $border-width solid $primary-color;
+   border-radius: $border-radius;
+   bottom: -0.5rem;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   left: 0;
+   padding: 1rem 2rem;
+   position: absolute;
+   rotate: -15deg;
+   z-index: 2;
+   width: 15rem;
+   height: 2.5rem;
+}

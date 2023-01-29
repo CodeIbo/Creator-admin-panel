@@ -1,14 +1,14 @@
-import { signOut } from "firebase/auth";
-import { auth } from "../login/firebase-config";
 import axios from 'axios';
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../../Context/UserContext";
+import NavigationBar from './navigation/Navigation';
+import { UpperBar } from './upper-bar/UpperBar';
+import './dashboard.scss';
 
-
-const Dashboard = ({ user,setUser }: any) => {
-  const logout = async () => {
-    await signOut(auth);
-    sessionStorage.removeItem('user')
-    setUser(null)
+const Dashboard = () => {
+  const userContext = useContext(UserContext);
+  const logout = () => {
+    userContext.logout();
   };
   const requestAPI = async () => {
     try {
@@ -23,8 +23,11 @@ const Dashboard = ({ user,setUser }: any) => {
   }, []);
   return (
     <>
-      <button onClick={logout}>signOut</button>
-      <h2>Login User: {user?.email} </h2>
+      <UpperBar></UpperBar>
+      <main>
+        <NavigationBar></NavigationBar>
+      </main>
+      <h2>Login User: {userContext.user?.email} </h2>
     </>
   );
 };

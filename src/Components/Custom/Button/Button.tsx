@@ -1,4 +1,4 @@
-import { ButtonInterface } from "../../Interfaces/buttonInterface"
+import { ButtonInterface } from "../../../Interfaces/buttonInterface"
 import './button.scss'
 
 

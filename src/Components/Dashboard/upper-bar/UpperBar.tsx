@@ -1,4 +1,4 @@
-import { Button } from "../../Custom/Button"
+import { Button } from "../../Custom/Button/Button"
 import { UserContext } from "../../../Context/UserContext"
 import { useContext } from "react"
 import './upperBar.scss'

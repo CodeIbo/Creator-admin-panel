@@ -1,4 +1,4 @@
-@import '../../scss/variables';
+@import '../../../scss/variables';
 .button {
     
     border-radius: $border-radius;
@@ -6,7 +6,7 @@
     max-height: 3rem;
     padding: 0.5rem 1.5rem;
     span{
-        color: $main-font-color;
+        color: $main-font-color default;
         font-weight: 600;
     }
 }

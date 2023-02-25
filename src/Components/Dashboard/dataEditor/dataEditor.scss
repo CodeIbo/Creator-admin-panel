@@ -1,0 +1,11 @@
+@import '../../../scss/global-imports.scss';
+
+
+.backgroundWrapper {
+    background-color: $tertiary-color;
+    border: 2px solid $primary-color;
+    border-radius: $border-radius;
+    height: max-content;
+    padding: 2rem;
+    width: 85%;
+}

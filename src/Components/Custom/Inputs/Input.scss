@@ -1,0 +1,29 @@
+@import '../../../scss/variables';
+
+.Input {
+    width: 98%;
+    padding: 2rem 0;
+    &--date{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    label {
+        display: block;
+    }
+    &__datePicker{
+        background-color: $secondary-color;
+        border: 3px $primary-color solid;
+        padding: 1rem;
+        input{
+            margin: 0 auto;
+        }
+    }
+    textarea {
+        padding: 1rem;
+        background-color: $secondary-color;
+        border: 3px $primary-color solid;
+        word-break: break-all;
+    }
+}

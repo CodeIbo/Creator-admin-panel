@@ -1,32 +1,32 @@
-import { CodeInputEditorInterface, textAreaInterface } from "../../../Interfaces/inputIntefraces"
+import { CodeInputEditorInterface, dateInputInterface, textAreaInterface } from "../../../Interfaces/inputIntefraces"
 import './Input.scss'
 import CodeEditor, { SelectionText } from "@uiw/react-textarea-code-editor";
 import { useRef, useEffect } from "react";
 
 
-const ClassicTextArea= ({label,labelText,value,onChange,cols}:textAreaInterface ) =>{
+const ClassicTextArea= ({label,labelText,value,onChange,onKeyDown,required,cols,maxLenght}:textAreaInterface ) =>{
     return(
         <div className="Input">
             <label htmlFor={label}>{labelText}</label>
-            <textarea id={label} className="Input" value={value} onChange={onChange} wrap="soft" cols={cols || 5}/>
+            <textarea id={label} onKeyDown={onKeyDown} className="Input" value={value} onChange={onChange} wrap="soft" cols={cols || 5} required={required || false} maxLength={maxLenght || 200}/>
         </div>
         
     )
 }
 
 
-const DatePicker = () =>{
+const DatePicker = ({date,onChange,required}:dateInputInterface) =>{
 
     return(
         <div className="Input Input--date">
             <label htmlFor="datePicker">Data:</label>
-             <input className="Input__datePicker" id="datePicker" type="date" />
+             <input className="Input__datePicker" id="datePicker" type="date" value={date} onChange={onChange} required={required || false}/>
         </div>
        
     )
 }
 
-const CodeInputEditor = ({code,onChange}:CodeInputEditorInterface) =>{
+const CodeInputEditor = ({code,onChange,language,placeholder}:CodeInputEditorInterface) =>{
     const textRef:any = useRef();
 
     useEffect(() => {
@@ -42,8 +42,8 @@ const CodeInputEditor = ({code,onChange}:CodeInputEditorInterface) =>{
           id="code"
           value={code}
           ref={textRef}
-          language="html"
-          placeholder="Please enter Html code."
+          language={language ||"html"}
+          placeholder={placeholder || "Please enter Html code."}
           onChange={onChange}
           padding={15}
           style={{

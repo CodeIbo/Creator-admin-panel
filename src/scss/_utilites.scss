@@ -1,0 +1,147 @@
+@use "sass:map";
+@use "sass:string";
+@use "sass:math";
+
+$utilities: (
+//padding
+  "padding": spacing("p", $base-padding),
+  "padding-left": spacing("pl", $base-padding),
+  "padding-right": spacing("pr", $base-padding),
+  "padding-top": spacing("pt", $base-padding),
+  "padding-bottom": spacing("pb", $base-padding),
+  "paddingx": spacing("px", $base-padding),
+  "paddingy": spacing("py", $base-padding),
+//margin
+    "margin": spacing("m", $base-margin),
+    "margin-left": spacing("ml", $base-margin),
+    "margin-right": spacing("mr", $base-margin),
+    "margin-top": spacing("mt", $base-margin),
+    "margin-bottom": spacing("mb", $base-margin),
+    "marginx": spacing("mx", $base-margin),
+    "marginy": spacing("my", $base-margin),
+//width
+  "width": utilsPercentage("w",$base-percentage),
+  "min-width": utilsPercentage("min-w",$base-percentage),
+//height
+  "height": utilsPercentage("h",$base-percentage),
+  "min-height": utilsPercentage("min-h",$base-percentage),
+// gap
+  "gap": spacing("gap",$base-gap),
+//display
+  "display":(
+    "prefix":"d",
+    "values":(
+      "block": block,
+      "inline": inline,
+      "flex":flex,
+      "none": none,
+    )
+  ),
+  //flex properties
+    "flex-wrap": (
+        "prefix":"flex",
+        "values":(
+            "wrap":wrap,
+            "nowrap":nowrap
+        )
+    ),
+
+  "justify-content":(
+      "prefix":"justify-content",
+      "values":(
+        "flex-start":flex-start,
+        "flex-end":flex-end,
+        "center":center,
+        "space-between":space-between,
+        "space-evenly":space-evenly,
+        "space-around":space-around,
+      )
+  ),
+  "align-items":(
+    "prefix":"align-items",
+    "values":(
+      "flex-start":flex-start,
+      "flex-end":flex-end,
+      "center":center,
+    )
+  ),
+  "flex-direction":(
+    "prefix":"flex",
+    "values":(
+      "row": row,
+      "row-reverse":row-reverse,
+      "column": column,
+      "column-reverse": column-reverse
+    )
+  ),
+  //text property
+  "text-align":(
+    "prefix":"text",
+    "values":(
+      "center":center,
+      "left":left,
+      "right":right,
+      "justify":justify
+    )
+  ),
+  // border property 
+  "border-radius": utilsPercentage("br",$base-percentage),
+);
+
+
+
+
+
+@each $property, $map in $utilities {
+  $prefix: map-get($map, "prefix");
+  $values: map-get($map, "values");
+
+  @each $k, $v in $values {
+    $lenghtToSlice: string.length($property);
+    
+    @if (string.slice($prefix, 2) == "x") {
+      .#{$prefix}-#{$k} {
+        #{string.slice($property,1,$lenghtToSlice - 1)}-left: $v;
+        #{string.slice($property,1,$lenghtToSlice - 1)}-right: $v;
+      }
+    } @else if (string.slice($prefix, 2) == "y") {
+      .#{$prefix}-#{$k} {
+        #{string.slice($property,1,$lenghtToSlice - 1)}-top: $v;
+        #{string.slice($property,1,$lenghtToSlice - 1)}-bottom: $v;
+      }
+    } @else {
+      .#{$prefix}-#{$k} {
+        #{$property}: $v;
+      }
+    }
+  }
+}
+
+@each $key-b,$val in $breakpoints {
+  @media(min-width: #{map-get($breakpoints,$key-b) * 1px}){
+    @each $property, $map in $utilities {
+      $prefix: map-get($map, "prefix");
+      $values: map-get($map, "values");
+    
+      @each $k, $v in $values {
+        $lenghtToSlice: string.length($property);
+        @if (string.slice($prefix, 2) == "x") {
+          .#{$prefix}-#{$k}-#{$key-b} {
+            #{string.slice($property,1,$lenghtToSlice - 1)}-left: $v;
+            #{string.slice($property,1,$lenghtToSlice - 1)}-right: $v;
+          }
+        } @else if (string.slice($prefix, 2) == "y") {
+          .#{$prefix}-#{$k}-#{$key-b} {
+            #{string.slice($property,1,$lenghtToSlice - 1)}-top: $v;
+            #{string.slice($property,1,$lenghtToSlice - 1)}-bottom: $v;
+          }
+        } @else {
+          .#{$prefix}-#{$k}-#{$key-b} {
+            #{$property}: $v;
+          }
+        }
+      }
+    }
+  }
+}
+

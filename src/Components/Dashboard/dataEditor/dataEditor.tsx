@@ -6,7 +6,7 @@ const DataEditor = ({type}:{type:string}) => {
     let component
     switch(type){
         case 'blog':
-            component = <BlogEditor/>
+            component = <BlogEditor mode="edit"/>
             break
         case 'customPages':
             component = <CustomPageEditor/>

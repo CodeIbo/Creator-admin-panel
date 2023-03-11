@@ -21,6 +21,9 @@
         }
     }
     textarea {
+        display: inline-block;
+        height: 1.5rem;
+        vertical-align: middle;
         padding: 1rem;
         background-color: $secondary-color;
         border: 3px $primary-color solid;

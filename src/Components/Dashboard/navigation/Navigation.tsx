@@ -7,16 +7,19 @@ const NavigationBar = () =>{
     const [menu, setMenu] = useState(false)
     return(
         menu ?
-        <nav className="nav">
-            <button className="nav__icons" onClick={() => setMenu(!menu)}><BsArrowBarLeft /></button>
-            <Link className="nav__link" to="/dashboard">Główna Strona</Link>
-            <Link className="nav__link" to="/dashboard/subsites">Podstrony</Link>
-            <Link className="nav__link" to="/dashboard/blog">Blog</Link>
-            <Link className="nav__link" to="/dashboard/users">Użytkownicy</Link>
-            <Link className="nav__link" to="/dashboard/statistics">Statystyki</Link>
-        </nav>
+       <section className="nav__wrapper">
+            <nav className="nav__content">
+                <button className="nav__icons" onClick={() => setMenu(!menu)}><BsArrowBarLeft /></button>
+                <Link className="nav__link" to="/dashboard">Główna Strona</Link>
+                <Link className="nav__link" to="/dashboard/subsites">Podstrony</Link>
+                <Link className="nav__link" to="/dashboard/blog">Blog</Link>
+                <Link className="nav__link" to="/dashboard/config">Konfiguracja</Link>
+                <Link className="nav__link" to="/dashboard/users">Użytkownicy</Link>
+                <Link className="nav__link" to="/dashboard/statistics">Statystyki</Link>
+            </nav>
+       </section>
         : 
-        <nav className="nav nav--hide">
+        <nav className="nav__wrapper nav--hide">
             <button className="nav__icons" onClick={() => setMenu(!menu)}><FiMenu /></button>
         </nav>
     )

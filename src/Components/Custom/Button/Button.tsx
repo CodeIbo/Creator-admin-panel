@@ -2,9 +2,9 @@ import { ButtonInterface, IconButtonInterface } from "../../../Interfaces/button
 import './button.scss';
 import {BsInfoCircleFill} from 'react-icons/bs';
 
-export const Button = ({clickFunction, name,backgroundColorClass,textColorClass,type}: ButtonInterface) =>{
+export const Button = ({clickFunction, name,backgroundColorClass,textColorClass,type,disabled}: ButtonInterface) =>{
     return (
-        <button onClick={(e) =>{ clickFunction(e)}} className={`button ${backgroundColorClass || 'bg-primary' }  ${textColorClass || 'text-secondary'}`} type={type || "button"}>
+        <button onClick={(e) =>{ clickFunction(e)}} className={`button ${backgroundColorClass || 'bg-primary' }  ${textColorClass || 'text-secondary'} ${disabled === true && 'button--disabled'}`} type={type || "button"} disabled={disabled === true || false}>
             <span>{name}</span>
         </button>
     )

@@ -12,9 +12,14 @@ import "./BlogEditor.scss";
 import { AiFillDelete } from "react-icons/ai";
 
 const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
+  let postLink = "add/post"
   let { id } = useParams();
+  if(mode === "edit"){
+    postLink = `edit/post/${id}`
+  }
+ 
   const navigate = useNavigate();
-  const { response, postAxios } = useAxiosPost(`edit/post/${id}`);
+  const { response, postAxios } = useAxiosPost(postLink);
   const { data, isLoading, fetchError } = useAxiosFetch(`post/${id}`);
   const [post, setPostData] = useState<post>({
     title: "",
@@ -28,8 +33,8 @@ const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
   const [inputValue, setInputValue] = useState<string>("");
 
   useEffect(() => {
-    if (data && !Array.isArray(data)) {
-      setPostData(data);
+    if (data && !Array.isArray(data) && mode === "edit") {
+      setPostData(data as post);
     }
   }, [data]);
 
@@ -95,7 +100,7 @@ const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
       <h1>BlogEditor</h1>
       {isLoading ? (
         <p>Loading...</p>
-      ) : fetchError ? (
+      ) : fetchError && mode === "edit" ? (
         <p>{fetchError}</p>
       ) : (
         <>
@@ -137,7 +142,7 @@ const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
                   className="p-1 bg-secondary d-flex justify-content-center align-items-center gap-1"
                   key={index}
                 >
-                  {tag}{" "}
+                  {tag}
                   <IconButton
                     clickFunction={(e) => {
                       removeItem(e, index, "tags");
@@ -204,13 +209,13 @@ const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
           </table>
           <div className="py-2 d-flex justify-content-center gap-1">
             <Link
-              to="../.."
+              to={mode === "new"? "../": "../.."}
               relative="path"
               className="button text-secondary bg-primary"
             >
               Powrót
             </Link>
-            <Button clickFunction={submit} name="Aktualizuj" />
+            <Button clickFunction={submit} name={mode === "new" ? "Dodaj" : "Aktualizuj"} />
           </div>
         </>
       )}

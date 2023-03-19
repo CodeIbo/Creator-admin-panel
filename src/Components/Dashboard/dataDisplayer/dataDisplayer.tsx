@@ -1,11 +1,15 @@
 import "./dataDisplayer.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "../../Custom/Button/button.scss";
 import { useEffect, useState } from "react";
-import {useAxiosFetch} from "../../../Hooks/useAxiosHook";
+import { useAxiosFetch } from "../../../Hooks/useAxiosHook";
+import PostRow from "./tableRows/postRow";
+import ConfigRows from "./tableRows/configRow";
 const DataDisplayer = ({ type }: { type: string }) => {
   const [typeData, setDataType] = useState("");
   const { data, fetchError, isLoading } = useAxiosFetch(typeData);
+  const [jsxElement, setJsxElement] = useState(<></>);
+  const location = useLocation();
 
   const [tableProperty, setTableProperty] = useState({
     id: "id",
@@ -17,6 +21,7 @@ const DataDisplayer = ({ type }: { type: string }) => {
     dataInFirstColumn: "",
     dataInSecondColumn: "",
     lastRow: "",
+    to: "",
   });
 
   useEffect(() => {
@@ -31,7 +36,9 @@ const DataDisplayer = ({ type }: { type: string }) => {
           dataInFirstColumn: "title",
           dataInSecondColumn: "tags",
           lastRow: "Dodaj Nowy Wpis",
+          to: "new",
         }));
+        setJsxElement(<PostRow tableProperty={tableProperty} data={data} />);
         break;
       case "subpages":
         setDataType("pages");
@@ -58,10 +65,23 @@ const DataDisplayer = ({ type }: { type: string }) => {
           lastRow: "Dodaj Nowego Użytkownika",
         }));
         break;
+      case "config":
+        setDataType("config/third-parties");
+        setTableProperty((prevState) => ({
+          ...prevState,
+          title: "Konfiguracja kont",
+          firstColumn: "Aplikacja",
+          secondColumn: "Nazwa Użytkownika",
+          dataInFirstColumn: "name",
+          dataInSecondColumn: "email",
+          lastRow: "",
+        }));
+        setJsxElement(<ConfigRows tableProperty={tableProperty} data={data} />);
+        break;
       default:
         console.log(`Type ${type} didn't exist`);
     }
-  }, [type]);
+  }, [type, data]);
 
   return (
     <>
@@ -84,33 +104,32 @@ const DataDisplayer = ({ type }: { type: string }) => {
                   <span>Loading...</span>
                 </td>
               </tr>
-            ) : fetchError ? (
+            ) : fetchError || jsxElement === null ? (
               <tr className="table__row shadow">
                 <td colSpan={3}>
                   <span>{fetchError}</span>
                 </td>
               </tr>
             ) : (
-              Array.isArray(data) && data?.map((element: any) => (
-                <tr className="table__row shadow" key={element.id}>
-                  <td>{element[`${tableProperty.dataInFirstColumn}`]}</td>
-                  <td>{element[`${tableProperty.dataInSecondColumn}`]}</td>
-                  <td>
-                    <Link
-                      className="button bg-primary text-secondary"
-                      to={`${element[`${tableProperty.id}`]}/edit`}
-                    >
-                      <span>Edycja</span>
-                    </Link>
-                  </td>
-                </tr>
-              ))
+              <>{jsxElement}</>
             )}
             <tr className="table__row shadow">
               <td colSpan={3}>
-                <Link className="button bg-primary text-secondary" to="">
-                  <span>{tableProperty.lastRow}</span>
-                </Link>
+                {tableProperty.lastRow ? (
+                  <Link
+                    className="button bg-primary text-secondary"
+                    to={`${location.pathname}/${tableProperty.to}`}
+                  >
+                    <span>{tableProperty.lastRow}</span>
+                  </Link>
+                ) : (
+                  <Link
+                    className="button bg-primary text-secondary"
+                    to="/dashboard"
+                  >
+                    <span>Dashboard</span>
+                  </Link>
+                )}
               </td>
             </tr>
           </tbody>

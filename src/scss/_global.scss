@@ -8,6 +8,6 @@ body{
     background-color: $bg-color;
     font-family: $mainFontFamily ;
     font-size: $fontSize;
-    height: 100vh;
+    min-height: 100vh;
 }
 

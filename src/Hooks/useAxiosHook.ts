@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios, { AxiosResponse, CancelToken } from 'axios'
 import {post} from '../Interfaces/Post'
+import { headersObject } from '../Interfaces/dynamicHeadersObject'
 
 const useAxiosFetch = (dataUrl: string) => {
-  const [data, setData] = useState<post[] | post | null>(null)
+  const [data, setData] = useState<any>(null)
   const [fetchError, setFetchError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -49,20 +50,23 @@ const useAxiosFetch = (dataUrl: string) => {
 }
 
 
-const useAxiosPost = (url:string) => {
+const useAxiosPost = (url:string,headersObject?:headersObject) => {
     const [response, setResponse] = useState<AxiosResponse<any, any> | null>(null);
+    const standardHeader = {'Content-Type': 'application/json'}
+
+      if(headersObject){
+        Object.assign(standardHeader,headersObject)
+      }
     
       const postAxios = async (
         postData: string
-      ) => {
+      ) => {  
         try {
           const response = await axios.post(
             `http://localhost:8888/${url}`,
             postData,
             {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: standardHeader
             }
           );
           setResponse(response);

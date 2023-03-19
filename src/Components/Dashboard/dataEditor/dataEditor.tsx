@@ -2,17 +2,21 @@ import BlogEditor from "./Blog/BlogEditor";
 import CustomPageEditor from "./CustomPages/CustomPagesEditor";
 import UserEditor from "./Users/UsersEditor";
 import './dataEditor.scss'
-const DataEditor = ({type}:{type:string}) => {
-    let component
+import ConfigEditor from "./Config/ConfigEditor";
+const DataEditor = ({type,mode}:{type:string,mode:"new" | "edit"}) => {
+  let component
     switch(type){
         case 'blog':
-            component = <BlogEditor mode="edit"/>
+            component = <BlogEditor mode={mode}/>
             break
         case 'customPages':
             component = <CustomPageEditor/>
             break
         case 'users':
             component = <UserEditor/>
+            break
+        case 'config':
+            component = <ConfigEditor mode={mode}/>
             break
         default:
             console.log(`${type} didnt exist`)
@@ -22,11 +26,11 @@ const DataEditor = ({type}:{type:string}) => {
   return (
     <>
       <header className="header">
-        <h1 className="title shadow">TEST</h1>
+        <h1 className="title shadow">Edit mode</h1>
       </header>
       <div className="table-wrapper">
         <section className="backgroundWrapper">
-            {component}
+            {component && component}
         </section>
         
       </div>

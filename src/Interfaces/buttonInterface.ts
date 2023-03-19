@@ -4,6 +4,7 @@ export interface ButtonInterface {
     backgroundColorClass?: string
     textColorClass?: string,
     type?: "button" | "submit" | "reset" | undefined,
+    disabled?: boolean;
 }
 
 export interface IconButtonInterface {

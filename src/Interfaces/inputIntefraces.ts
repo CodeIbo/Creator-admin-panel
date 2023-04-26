@@ -1,14 +1,18 @@
 import { ChangeEvent,KeyboardEvent } from "react";
 
-export interface textAreaInterface {
+export interface defaultInput<TypeElement> {
     label: string,
     labelText:string,
     value: string,
-    maxLenght?:number,
-    onChange: (event:ChangeEvent<HTMLTextAreaElement>) => void,
-    onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void,
-    cols?:number,
+    onChange: (event:ChangeEvent<TypeElement>) => void,
+    onKeyDown?: (event: KeyboardEvent<TypeElement>) => void,
     required?: boolean
+    type? : string
+}
+
+export interface textAreaInterface extends defaultInput<HTMLTextAreaElement>{
+    maxLenght?:number,
+    cols?:number,
 }
 
 export interface CodeInputEditorInterface {

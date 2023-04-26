@@ -1,0 +1,9 @@
+@import '../../scss/variables';
+
+.login-section {
+    height: 100vh;
+
+    &__content{
+        border-radius: $border-radius;
+    }
+}

@@ -1,4 +1,4 @@
-import { CodeInputEditorInterface, dateInputInterface, textAreaInterface } from "../../../Interfaces/inputIntefraces"
+import { CodeInputEditorInterface, dateInputInterface, defaultInput, textAreaInterface } from "../../../Interfaces/inputIntefraces"
 import './Input.scss'
 import CodeEditor, { SelectionText } from "@uiw/react-textarea-code-editor";
 import { useRef, useEffect } from "react";
@@ -9,6 +9,15 @@ const ClassicTextArea= ({label,labelText,value,onChange,onKeyDown,required,cols,
         <div className="Input">
             <label htmlFor={label}>{labelText}</label>
             <textarea id={label} onKeyDown={onKeyDown} className="Input" value={value} onChange={onChange} wrap="soft" cols={cols || 5} required={required || false} maxLength={maxLenght || 200}/>
+        </div>
+        
+    )
+}
+const ClassicTextInput= ({label,labelText,value,onChange,onKeyDown,required,type}:defaultInput<HTMLInputElement> ) =>{
+    return(
+        <div className="Input">
+            <label htmlFor={label}>{labelText}</label>
+            <input id={label} onKeyDown={onKeyDown} className="Input" value={value} onChange={onChange} required={required || false} type={type}/>
         </div>
         
     )
@@ -61,6 +70,7 @@ const CodeInputEditor = ({code,onChange,language,placeholder}:CodeInputEditorInt
 
 
 export {
+    ClassicTextInput,
     ClassicTextArea,
     DatePicker,
     CodeInputEditor

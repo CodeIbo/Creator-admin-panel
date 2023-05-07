@@ -6,6 +6,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 2.5rem;
 }
 
 
@@ -15,20 +16,20 @@
     border-collapse: separate;
     border-radius: $border-radius;
     border-spacing: 0 1rem;  
-    table-layout:auto;
-    width: 85%;
+    table-layout:fixed;
+    width: 100%;
     &__row{
         border-radius: $border-radius;
         background-color: $secondary-color;
 
         color: $primary-color;
         text-align: center;
-        text-overflow: ellipsis;
-        overflow: hidden; 
-        white-space: nowrap;
         td{
             border: 1px solid $primary-color;
             padding: 1rem;
+            text-overflow: ellipsis;
+            overflow: hidden; 
+            white-space: nowrap;
         }
         td:first-child { 
             border-top-left-radius: $border-radius;
@@ -37,11 +38,12 @@
         td:last-child { 
             border-top-right-radius: $border-radius;
             border-bottom-right-radius: $border-radius;
-          }
+        }
     }
     &__drag-cell{
         cursor: grab;
         width: 5%;
     }
+
 
 }

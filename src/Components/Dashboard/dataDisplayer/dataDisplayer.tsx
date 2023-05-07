@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAxiosFetch } from "../../../Hooks/useAxiosHook";
 import PostRow from "./tableRows/postRow";
 import ConfigRows from "./tableRows/configRow";
+import PodcastRow from "./tableRows/podcastRow";
 const DataDisplayer = ({ type }: { type: string }) => {
   const [typeData, setDataType] = useState("");
   const { data, fetchError, isLoading } = useAxiosFetch(typeData);
@@ -77,6 +78,20 @@ const DataDisplayer = ({ type }: { type: string }) => {
           lastRow: "",
         }));
         setJsxElement(<ConfigRows tableProperty={tableProperty} data={data} />);
+        break;
+
+      case "podcast":
+        setDataType("spotify/podcast/episodes");
+        setTableProperty((prevState) => ({
+          ...prevState,
+          title: "Podcasty",
+          firstColumn: "Tytuł",
+          secondColumn: "Opis",
+          dataInFirstColumn: "title",
+          dataInSecondColumn: "description",
+          lastRow: "",
+        }));
+        setJsxElement(<PodcastRow tableProperty={tableProperty} data={data} />);
         break;
       default:
         console.log(`Type ${type} didn't exist`);

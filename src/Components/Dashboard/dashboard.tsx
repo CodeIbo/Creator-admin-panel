@@ -20,12 +20,10 @@ const Dashboard = () => {
               <Route path="/blog" element={<DataDisplayer type="blog" />} />
               <Route path="/users" element={<DataDisplayer type="users" />} />
               <Route path="/config" element={<DataDisplayer type="config" />} />
-              <Route path="/blog/:id/edit" element={<DataEditor type="blog" mode="edit"/>
-            } />
-            <Route path="/config/:app/edit" element={<DataEditor type="config" mode="edit"/>
-            } />
-            <Route path="/blog/new" element={<DataEditor type="blog" mode="new"/>
-            } />
+              <Route path="/blog/:id/edit" element={<DataEditor type="blog" mode="edit"/>} />
+              <Route path="/podcast" element={<DataDisplayer type="podcast"/>} />
+              <Route path="/config/:app/edit" element={<DataEditor type="config" mode="edit"/>} />
+              <Route path="/blog/new" element={<DataEditor type="blog" mode="new"/>} />
             </Routes>
           </section>
       </main>

@@ -1,3 +1,3 @@
 export interface headersObject {
-    [x: string]: string;
+    [x: string]: any;
 }

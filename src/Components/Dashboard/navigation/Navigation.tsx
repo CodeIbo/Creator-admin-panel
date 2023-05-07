@@ -13,6 +13,7 @@ const NavigationBar = () =>{
                 <Link className="nav__link" to="/dashboard">Główna Strona</Link>
                 <Link className="nav__link" to="/dashboard/subsites">Podstrony</Link>
                 <Link className="nav__link" to="/dashboard/blog">Blog</Link>
+                <Link className="nav__link" to="/dashboard/podcast">Podcasty</Link>
                 <Link className="nav__link" to="/dashboard/config">Konfiguracja</Link>
                 <Link className="nav__link" to="/dashboard/users">Użytkownicy</Link>
                 <Link className="nav__link" to="/dashboard/statistics">Statystyki</Link>

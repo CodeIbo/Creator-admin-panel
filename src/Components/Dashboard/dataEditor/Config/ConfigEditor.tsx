@@ -18,10 +18,18 @@ const ConfigEditor = ({ mode }: { mode: "new" | "edit" }) => {
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
     key: string
   ) => {
-    setDataToSend((prevState) => ({
-      ...prevState,
-      [key]: e.target.value,
-    }));
+    setDataToSend((prevState) => {
+      if(prevState){
+        return{
+          ...prevState,
+          [dynamicUrl]: { 
+            ...prevState[dynamicUrl],
+            [key]: e.target.value
+          }
+          
+        }
+      }
+    });
   };
 
   const Submit = async (
@@ -30,7 +38,7 @@ const ConfigEditor = ({ mode }: { mode: "new" | "edit" }) => {
     e?.preventDefault();
     if (dataToSend) {
       await postAxios(JSON.stringify(dataToSend[dynamicUrl]));
-      navigate("/dashboard/blog");
+      navigate("/dashboard/config");
     }
   };
   const Authorization = () =>{
@@ -55,7 +63,7 @@ const ConfigEditor = ({ mode }: { mode: "new" | "edit" }) => {
               <ClassicTextArea
                 label={i.toString()}
                 labelText={key}
-                value={value}
+                value={value as string}
                 onChange={(e) => {
                   onChange(e, key);
                 }}

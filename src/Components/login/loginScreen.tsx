@@ -5,14 +5,19 @@ import { UserContext } from "../../Context/UserContext";
 import { Button } from "../Custom/Button/Button";
 import { ClassicTextInput } from "../Custom/Inputs/Inputs";
 import './loginScreen.scss'
+import { useNavigate } from "react-router-dom";
 
 const LoginScreen = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const userContext = useContext(UserContext);
+  const navigate = useNavigate();
 
   const login = () => {
     userContext.login(auth, loginEmail, loginPassword);
+    if(userContext.user){
+      navigate('/dashboard')
+    }
   };
 
   return (

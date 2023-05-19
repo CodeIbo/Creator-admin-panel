@@ -4,11 +4,20 @@ import CodeEditor, { SelectionText } from "@uiw/react-textarea-code-editor";
 import { useRef, useEffect } from "react";
 
 
-const ClassicTextArea= ({label,labelText,value,onChange,onKeyDown,required,cols,maxLenght}:textAreaInterface ) =>{
+const ClassicTextArea= ({label,labelText,value,onChange,onKeyDown,required,cols,rows,maxLenght}:textAreaInterface ) =>{
+    const textAreaRef  = useRef<HTMLTextAreaElement>(null);
+    const resizeTextArea = () => {
+        if(textAreaRef.current){
+            textAreaRef.current.style.height = "auto";
+            textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
+        }
+      };
+    useEffect(() =>{if(textAreaRef.current ) {textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";}},[])
+    useEffect(() => resizeTextArea,[value])
     return(
         <div className="Input">
             <label htmlFor={label}>{labelText}</label>
-            <textarea id={label} onKeyDown={onKeyDown} className="Input" value={value} onChange={onChange} wrap="soft" cols={cols || 5} required={required || false} maxLength={maxLenght || 200}/>
+            <textarea ref={textAreaRef} id={label} onKeyDown={onKeyDown} className="Input" value={value} onChange={onChange} wrap="soft" cols={cols || undefined} required={required || false} maxLength={maxLenght || undefined} rows={rows || undefined}/>
         </div>
         
     )

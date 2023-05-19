@@ -22,11 +22,16 @@
     }
     textarea,input {
         display: inline-block;
-        height: 1.5rem;
         vertical-align: middle;
-        padding: 1rem;
+        min-height: 1.5rem;
+        padding: 1rem 1rem 0 1rem;
         background-color: $secondary-color;
         border: 3px $primary-color solid;
-        word-break: break-all;
+        word-break: break-word;
+        overflow-y: hidden;
+    }
+    input{
+        height: 1.5rem;
+        padding: 1rem;
     }
 }

@@ -3,6 +3,7 @@ import CustomPageEditor from "./CustomPages/CustomPagesEditor";
 import UserEditor from "./Users/UsersEditor";
 import './dataEditor.scss'
 import ConfigEditor from "./Config/ConfigEditor";
+import PodcastEditor from "./Podcast/PodcastEditor";
 const DataEditor = ({type,mode}:{type:string,mode:"new" | "edit"}) => {
   let component
     switch(type){
@@ -18,6 +19,9 @@ const DataEditor = ({type,mode}:{type:string,mode:"new" | "edit"}) => {
         case 'config':
             component = <ConfigEditor mode={mode}/>
             break
+        case 'podcast':
+          component = <PodcastEditor/>
+          break
         default:
             console.log(`${type} didnt exist`)
     }

@@ -7,6 +7,7 @@ import {
   ClassicTextArea,
   DatePicker,
   CodeInputEditor,
+  ClassicTextInput,
 } from "../../../Custom/Inputs/Inputs";
 import "./BlogEditor.scss";
 import { AiFillDelete } from "react-icons/ai";
@@ -52,7 +53,7 @@ const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
     }
   };
 
-  const onKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       const tagList = post.tags;
@@ -104,30 +105,28 @@ const BlogEditor = ({ mode }: { mode: "new" | "edit" }) => {
         <p>{fetchError}</p>
       ) : (
         <>
-          <ClassicTextArea
+          <ClassicTextInput
             value={post.url}
             onChange={(e) => onChange(e, "url")}
             label="url"
             labelText="Adres:"
             required={true}
           />
-          <ClassicTextArea
+          <ClassicTextInput
             value={post.title}
             onChange={(e) => onChange(e, "title")}
             label="title"
             labelText="Tytuł:"
             required={true}
           />
-          <ClassicTextArea
+          <ClassicTextInput
             value={post.subtitle}
             onChange={(e) => onChange(e, "subtitle")}
             label="subtitle"
             labelText="Podtytuł:"
             required={true}
           />
-          <ClassicTextArea
-            cols={1}
-            maxLenght={30}
+          <ClassicTextInput
             value={inputValue}
             onChange={(e) => onChange(e, "tags")}
             onKeyDown={(e) => onKeyPress(e)}

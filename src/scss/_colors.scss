@@ -1,8 +1,8 @@
 @each $key, $val in $colors {
     .bg-#{$key}{
-        background-color: $val;
+        background-color: $val !important;
     }
     .text-#{$key}{
-        color: $val;
+        color: $val !important;
     }
 }

@@ -1,6 +1,6 @@
 import { useAxiosFetch, useAxiosPost } from "../../../../Hooks/useAxiosHook";
 import { headersObject } from "../../../../Interfaces/dynamicHeadersObject";
-import { ClassicTextArea } from "../../../Custom/Inputs/Inputs";
+import { ClassicTextInput } from "../../../Custom/Inputs/Inputs";
 import { Link, useNavigate , useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "../../../Custom/Button/Button";
@@ -41,10 +41,6 @@ const ConfigEditor = ({ mode }: { mode: "new" | "edit" }) => {
       navigate("/dashboard/config");
     }
   };
-  const Authorization = () =>{
-    window.open('', '_blank');
-    navigate('',{replace:true})
-  }
   useEffect(() => {
     setDataToSend(data);
   }, [data]);
@@ -60,7 +56,7 @@ const ConfigEditor = ({ mode }: { mode: "new" | "edit" }) => {
         <>
           {dataToSend &&
             Object.entries(dataToSend[dynamicUrl]).map(([key, value], i) => (
-              <ClassicTextArea
+              <ClassicTextInput
                 label={i.toString()}
                 labelText={key}
                 value={value as string}

@@ -1,9 +1,23 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { Button } from "../../../Custom/Button/Button"
+import { useAxiosPost } from "../../../../Hooks/useAxiosHook"
 
 const ConfigRows = ({ tableProperty, data }:{tableProperty:any,data:any}) =>{
-    const [clickedLink, setClickedLink] = useState<boolean>(false)
-    // Object.keys(data[`${key}`])[0]
+    const [isLoadedData, setIsLoadedData] = useState<string>("")
+    const { response, postAxios } = useAxiosPost(`spotify/podcast/refresh/${isLoadedData}`);
+    const updateEpisodes = () =>{
+      postAxios();
+    }
+    useEffect(() => {
+      if(data){
+        if('spotify' in data){
+          setIsLoadedData(data.spotify.episodeId)
+        } 
+      }
+    }, [data])
+    
+    
     
     return(
        <>
@@ -20,10 +34,13 @@ const ConfigRows = ({ tableProperty, data }:{tableProperty:any,data:any}) =>{
               >
                 <span>Edycja</span>
               </Link>
-             {key === "spotify" &&  <a className={`button bg-primary text-secondary ${clickedLink && 'btn--disabled'}`} href="http://localhost:8888/spotify/callback" target="_blank" rel="noopener">Autoryzuj</a>      
+             {key === "spotify" &&  <>
+             <a className="button bg-primary text-secondary" href="http://localhost:8888/spotify/callback" target="_blank" rel="noopener">Autoryzuj</a> 
+             <Button name="Aktualizuj" clickFunction={updateEpisodes} disabled={!data?.spotify.episodeId}/>
+             </>    
              }
             </td>
-            </tr>
+          </tr>
             
         ))
         }

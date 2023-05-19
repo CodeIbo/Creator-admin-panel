@@ -4,8 +4,8 @@ import {BsInfoCircleFill} from 'react-icons/bs';
 
 export const Button = ({clickFunction, name,backgroundColorClass,textColorClass,type,disabled}: ButtonInterface) =>{
     return (
-        <button onClick={(e) =>{ clickFunction(e)}} className={`button ${backgroundColorClass || 'bg-primary' }  ${textColorClass || 'text-secondary'} ${disabled === true && 'button--disabled'}`} type={type || "button"} disabled={disabled === true || false}>
-            <span>{name}</span>
+        <button onClick={(e) =>{ clickFunction(e)}} className={`button ${backgroundColorClass} ${disabled === true && 'button--disabled'}`} type={type || "button"} disabled={disabled === true || false}>
+            <span className={textColorClass}>{name}</span>
         </button>
     )
 }

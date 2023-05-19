@@ -13,6 +13,7 @@ export interface defaultInput<TypeElement> {
 export interface textAreaInterface extends defaultInput<HTMLTextAreaElement>{
     maxLenght?:number,
     cols?:number,
+    rows?:number
 }
 
 export interface CodeInputEditorInterface {

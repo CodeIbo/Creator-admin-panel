@@ -6,6 +6,7 @@ import { useAxiosFetch } from "../../../Hooks/useAxiosHook";
 import PostRow from "./tableRows/postRow";
 import ConfigRows from "./tableRows/configRow";
 import PodcastRow from "./tableRows/podcastRow";
+import UserRow from "./tableRows/userRow";
 const DataDisplayer = ({ type }: { type: string }) => {
   const [typeData, setDataType] = useState("");
   const { data, fetchError, isLoading } = useAxiosFetch(typeData);
@@ -59,12 +60,13 @@ const DataDisplayer = ({ type }: { type: string }) => {
           ...prevState,
           id: "uid",
           title: "Użytkownicy",
-          firstColumn: "Nazwa",
+          firstColumn: "Rola",
           secondColumn: "Mail",
           dataInFirstColumn: "name",
           dataInSecondColumn: "email",
           lastRow: "Dodaj Nowego Użytkownika",
         }));
+        setJsxElement(<UserRow tableProperty={tableProperty} data={data} />);
         break;
       case "config":
         setDataType("config/third-parties");

@@ -1,17 +1,15 @@
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { BrowserRouter } from "react-router-dom";
-import { UserContextProvider } from "./Context/UserContext";
-import "./scss/global-imports.scss";
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import { AuthProvider } from './Services/Context/Auth/AuthProvider';
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById('root') as HTMLElement
 );
 root.render(
   <BrowserRouter>
-    <UserContextProvider>
+    <AuthProvider>
       <App />
-    </UserContextProvider>
+    </AuthProvider>
   </BrowserRouter>
 );
-

@@ -1,0 +1,12 @@
+{
+  "blog": {
+    "post_name": "input",
+    "meta_data_title": "input",
+    "meta_data_description": "input",
+    "post_url": "input",
+    "publication_date": "input-date",
+    "post_author": "input",
+    "post_content": "input-html",
+    "post_tags": "input-array"
+  }
+}

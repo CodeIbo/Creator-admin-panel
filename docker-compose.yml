@@ -1,0 +1,24 @@
+services:
+  panel_admin:
+    container_name: panel_admin
+    tty: true
+    stdin_open: true
+    build: .
+    volumes:
+      - .:/usr/code
+    ports:
+      - ${PORT}:${PORT}
+    expose:
+      - ${PORT}
+    environment:
+      SERVICE_TAGS: prod
+      SERVICE_NAME: nodeapppanel
+      SERVER_PORT: ${PORT}
+      CHOKIDAR_USEPOLLING: true
+      WATCHPACK_POLLING: true
+    networks:
+      - internalnet
+
+networks:
+  internalnet:
+    driver: bridge

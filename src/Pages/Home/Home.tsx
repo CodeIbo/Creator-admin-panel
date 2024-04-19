@@ -1,8 +1,4 @@
-import { useState } from 'react';
-
 function Home() {
-  const [code, setCode] = useState('');
-
   return (
     <p>
       Lorem ipsum dolor sit, amet consectetur adipisicing elit. Esse, numquam!

@@ -4,6 +4,11 @@ import List from '@mui/material/List';
 
 import BookTwoToneIcon from '@mui/icons-material/BookTwoTone';
 import HomeIcon from '@mui/icons-material/Home';
+import HeadsetIcon from '@mui/icons-material/Headset';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LanguageIcon from '@mui/icons-material/Language';
+import ImageIcon from '@mui/icons-material/Image';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import SideBarHandlerType from '../../Models/SideBarHandlerType';
 import ListItemCustom from './ListItem/ListItem';
 
@@ -25,13 +30,42 @@ function SideBar({ sideBarState, sideBarHandler }: SideBarHandlerType) {
             <ListItemCustom
               IconElement={HomeIcon}
               name="Home"
-              urlAdress="/dashboard/"
+              urlAdress="/dashboard"
+            />
+
+            <ListItemCustom
+              IconElement={MenuBookIcon}
+              name="Menu"
+              urlAdress="menu"
+            />
+
+            <ListItemCustom
+              IconElement={LanguageIcon}
+              name="Pages"
+              urlAdress="pages"
             />
 
             <ListItemCustom
               IconElement={BookTwoToneIcon}
               name="Blog"
-              urlAdress="/dashboard/blog"
+              urlAdress="blog"
+            />
+            <ListItemCustom
+              IconElement={HeadsetIcon}
+              name="Podcast"
+              urlAdress="podcast"
+            />
+
+            <ListItemCustom
+              IconElement={ImageIcon}
+              name="Gallery"
+              urlAdress="gallery"
+            />
+
+            <ListItemCustom
+              IconElement={AccountCircleIcon}
+              name="Users"
+              urlAdress="users"
             />
           </List>
         </Box>

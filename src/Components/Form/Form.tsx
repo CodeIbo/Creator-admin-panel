@@ -1,61 +1,160 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import { random } from 'lodash';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import { Typography } from '@mui/material';
 import FormType from '../../Models/FormType';
+
 import formHelper from '../../Services/Helpers/formHelper.json';
 import Editor from '../CodeEditor/CodeEditor';
-import DynamicObject from '../../Models/DynamicObject';
 import useFetch from '../../Services/Hooks/useFetch';
 import InputArray from '../InputArray/InputArray';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import LinkButton from '../LinkButton/LinkButton';
+import useFormGenerator from '../../Services/Hooks/useFormGenerator';
+import { ApiCallback, ApiUpdate } from '../../Models/AxiosResponse';
+import { FormHelper } from '../../Models/JSONHelpers';
+import { FormDataNames } from '../../Models/dataNames';
+import Dropdown from '../Dropdown/Dropdown';
 
-function Form({ dataType, data = {}, mode }: FormType) {
+function Form({ dataType, data, mode }: FormType) {
   const { id } = useParams();
   const navigate = useNavigate();
-  const jsonUntypedData = formHelper[dataType] as DynamicObject;
+  const { emptyForm } = useFormGenerator(dataType, 'regex');
+  const { htmlInput, setHtmlInput, arrayInput, setArrayInput } =
+    useFormGenerator(dataType, undefined, {
+      edit: mode !== 'new',
+      data,
+    });
+  const jsonUntypedData: FormHelper[FormDataNames] = formHelper[dataType];
   const { response, isLoading, error, apiHandler } = useFetch();
   const [formData, setFormData] = useState(data);
-  const [htmlInput, setHtmlInput] = useState('');
-  const [arrayInput, setArrayInput] = useState<string[] | []>([]);
-
+  const [errorRegex, setRegexError] = useState(emptyForm);
+  const [dropdownValue, setDropdownValue] = useState({
+    url_id: '',
+    position_on_list: 0,
+  });
+  const { triggerAlert } = useAlert();
+  const location = useLocation();
+  const urlData = location.state;
   const inputHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    data_key: string
+    data_key: string,
+    regex?: string
   ) => {
-    setFormData({ ...formData, [`${data_key}`]: e.target.value });
+    let pattern;
+    const { value } = e.target;
+    switch (regex) {
+      case 'email':
+        pattern = /^[^\s@]+@[^\s@]+\.[^\s@]*$/;
+        break;
+      case 'link':
+        pattern = /^[a-z,-]*$/;
+        break;
+      case 'foregin_key':
+        pattern = /^[a-z,-]*$/;
+        break;
+      default:
+        pattern = null;
+    }
+    if (pattern) {
+      if (!pattern.test(value)) {
+        setRegexError((prev) => {
+          return { ...prev, [data_key]: true };
+        });
+      } else {
+        setRegexError((prev) => {
+          return { ...prev, [data_key]: false };
+        });
+      }
+    }
+    setFormData((prev) => {
+      return { ...prev, [data_key]: value };
+    });
   };
-  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+  const submitHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const clonedFormData: ApiUpdate = structuredClone(formData);
+    Object.keys(jsonUntypedData).map((key) => {
+      if (
+        jsonUntypedData[key as keyof FormHelper[FormDataNames]]?.type ===
+        'input-html'
+      ) {
+        clonedFormData[key as keyof ApiCallback] = htmlInput;
+      }
+      if (
+        jsonUntypedData[key as keyof FormHelper[FormDataNames]]?.type ===
+        'input-array'
+      ) {
+        Object.assign(clonedFormData, { [key]: arrayInput });
+      }
+      if (
+        jsonUntypedData[key as keyof FormHelper[FormDataNames]]?.key &&
+        urlData?.urlKey
+      ) {
+        clonedFormData[key as keyof ApiCallback] = urlData.urlKey;
+      }
+    });
+    if ('url_id' in clonedFormData) {
+      Object.assign(clonedFormData, { url_id: dropdownValue.url_id });
+    }
     if (id) {
+      if ('id' in clonedFormData) {
+        delete clonedFormData.id;
+      }
+      if ('created_at' in clonedFormData) {
+        delete clonedFormData.created_at;
+      }
       apiHandler({
         method: 'put',
         url: `${dataType}/${id}`,
+        data: clonedFormData,
       });
     } else {
+      if (dataType === 'blog' || dataType === 'podcast') {
+        Object.assign(clonedFormData, { page_category: dataType });
+      }
+      if (dataType === 'menu') {
+        Object.assign(clonedFormData, {
+          menu_order: dropdownValue.position_on_list,
+        });
+      }
       apiHandler({
         method: 'post',
         url: dataType,
+        data: clonedFormData,
       });
     }
   };
   useEffect(() => {
-    if (mode === 'new') {
-      Object.keys(jsonUntypedData).map((key) => {
-        return setFormData({ ...formData, [`${key}`]: '' });
-      });
-    } else {
-      setHtmlInput(data.post_content as string);
-      setArrayInput(JSON.parse(data.post_tags) as string[]);
+    if (!isLoading) {
+      if (error?.response?.data) {
+        triggerAlert(error?.response?.data?.message, 'error');
+      }
+      if (response?.statusCode === 200 || response?.statusCode === 201) {
+        triggerAlert(id ? 'Updated' : 'Added', 'info');
+        navigate(-1);
+      }
     }
+  }, [error, response, isLoading]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {
+    setFormData(data);
+    if ('url_id' in data && data.url_id.length > 0) {
+      setDropdownValue((prev) => {
+        return { ...prev, url_id: data.url_id };
+      });
+    }
+  }, [data]);
 
   return (
-    <form onSubmit={submitHandler}>
+    <form
+      onSubmit={(e) => {
+        submitHandler(e);
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -66,77 +165,157 @@ function Form({ dataType, data = {}, mode }: FormType) {
         }}
       >
         {Object.keys(jsonUntypedData).map((key) => {
-          if (jsonUntypedData[key] === 'input') {
-            return (
-              <TextField
-                key={key}
-                variant="outlined"
-                label={key}
-                value={formData[key]}
-                onChange={(e) => {
-                  inputHandler(e, key);
-                }}
-                sx={{
-                  minWidth: '100%',
-                }}
-              />
-            );
-          }
-          if (jsonUntypedData[key] === 'input-date') {
-            return (
-              <TextField
-                key={key}
-                variant="outlined"
-                type="date"
-                label="Data Publikacji"
-                sx={{
-                  width: '100%',
-                }}
-                value={
-                  new Date(formData[key] as string).toLocaleDateString(
-                    'en-CA'
-                  ) as string
-                }
-                onChange={(e) => {
-                  inputHandler(e, key);
-                }}
-              />
-            );
-          }
-          if (jsonUntypedData[key] === 'input-html') {
-            return (
-              <Editor
-                key={key}
-                editorHandler={setHtmlInput}
-                value={htmlInput}
-              />
-            );
-          }
-          if (jsonUntypedData[key] === 'input-array') {
-            return (
-              <InputArray
-                key={key}
-                arrayData={arrayInput}
-                arrayDataSet={setArrayInput}
-              />
-            );
-          }
+          switch (
+            jsonUntypedData[key as keyof FormHelper[FormDataNames]]?.type
+          ) {
+            case 'input':
+              return (
+                <TextField
+                  hidden={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.hidden
+                  }
+                  key={key}
+                  variant="outlined"
+                  label={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.label
+                  }
+                  value={formData[key as keyof ApiCallback]}
+                  onChange={(e) => {
+                    inputHandler(
+                      e,
+                      key,
+                      jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                        ?.regex
+                    );
+                  }}
+                  disabled={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.disabled
+                  }
+                  sx={{
+                    minWidth: '100%',
+                  }}
+                  required={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.required
+                  }
+                  type={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.dataType
+                  }
+                  error={
+                    key in errorRegex &&
+                    errorRegex[key as keyof typeof errorRegex]
+                  }
+                  helperText={
+                    key in errorRegex &&
+                    errorRegex[key as keyof typeof errorRegex]
+                      ? 'Error'
+                      : ''
+                  }
+                />
+              );
+            case 'input-date':
+              return (
+                <TextField
+                  key={key}
+                  variant="outlined"
+                  type="date"
+                  label={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.label
+                  }
+                  sx={{
+                    width: '100%',
+                  }}
+                  value={
+                    new Date(
+                      formData[key as keyof ApiCallback]
+                    ).toLocaleDateString('en-CA') as string
+                  }
+                  onChange={(e) => {
+                    inputHandler(e, key);
+                  }}
+                  required={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.required
+                  }
+                  disabled={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.disabled
+                  }
+                />
+              );
+            case 'input-html':
+              return (
+                <Editor
+                  key={key}
+                  editorHandler={setHtmlInput}
+                  value={htmlInput}
+                />
+              );
+            case 'input-array':
+              return (
+                <InputArray
+                  key={key}
+                  arrayData={arrayInput}
+                  arrayDataSet={setArrayInput}
+                />
+              );
+            case 'dropdown':
+              return (
+                <Dropdown
+                  dropdownHandler={setDropdownValue}
+                  dropdownValue={dropdownValue.url_id}
+                  api_url={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.dropdown_link as string
+                  }
+                  label={
+                    jsonUntypedData[key as keyof FormHelper[FormDataNames]]
+                      ?.label as string
+                  }
+                />
+              );
+            default:
+              if (
+                jsonUntypedData[key as keyof FormHelper[FormDataNames]]?.hidden
+              ) {
+                return null;
+              }
 
-          return <h1 key={random()}>ERROR</h1>;
+              return (
+                <Typography
+                  typography="p"
+                  textAlign="center"
+                  key={key}
+                  sx={{ color: 'red' }}
+                >
+                  ERROR key: {`${key}`}
+                </Typography>
+              );
+          }
         })}
         <ButtonGroup variant="contained">
-          <Button
-            onClick={() => {
-              navigate('..', { relative: 'path' });
-            }}
+          <LinkButton
+            onClick={() => navigate(-1)}
             sx={{
               width: '10rem',
             }}
             color="error"
+            buttonText="Cancel"
+          />
+
+          <Button
+            type="submit"
+            sx={{ width: '10rem' }}
+            disabled={
+              typeof errorRegex === 'object' &&
+              !Object.values(errorRegex).every((value) => !value)
+            }
           >
-            Cancel
-          </Button>
-          <Button type="submit" sx={{ width: '10rem' }}>
             Send
           </Button>
         </ButtonGroup>

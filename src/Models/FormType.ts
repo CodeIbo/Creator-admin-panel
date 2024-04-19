@@ -1,9 +1,9 @@
-import DynamicObject from './DynamicObject';
-import DataNames from './dataNames';
+import { ApiCallback } from './AxiosResponse';
+import { FormDataNames } from './dataNames';
 
 type FormType = {
-  data?: DynamicObject;
-  dataType: DataNames;
+  data: ApiCallback;
+  dataType: FormDataNames;
   mode: 'new' | 'edit';
 };
 

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,11 +7,11 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import useAuth from '../../Services/Hooks/useAuth';
 import TopBarHandlerType from '../../Models/TopBarHandlerType';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 
 function TopBar({ SideBarHandler }: TopBarHandlerType) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore: Unreachable code error
   const { setAuth } = useAuth();
+  const { triggerAlert } = useAlert();
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ mb: 5 }}>
@@ -35,6 +34,7 @@ function TopBar({ SideBarHandler }: TopBarHandlerType) {
           <Button
             color="inherit"
             onClick={() => {
+              triggerAlert('Logout', 'success');
               setAuth({});
             }}
           >

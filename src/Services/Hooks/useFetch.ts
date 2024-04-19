@@ -1,60 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AxiosRequestConfig } from 'axios';
 import useAxiosPrivate from './useAxiosPrivate';
-import DynamicObject from '../../Models/DynamicObject';
+import {
+  AxiosResponseUnTypedData,
+  AxiosErrorData,
+} from '../../Models/AxiosResponse';
 
 export default function useFetch() {
   const [response, setResponse] = useState<null | {
     httpStatus: string;
     statusCode: number;
     timeStamp: string;
-    data: DynamicObject[];
+    data: AxiosResponseUnTypedData;
   }>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<AxiosErrorData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const axiosPrivates = useAxiosPrivate();
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       axiosPrivates[method](url, config, data)
-  //         .then((res) => {
-  //           setResponse(res.data);
-  //         })
-  //         .finally(() => {
-  //           setIsLoading(false);
-  //         });
-  //     } catch (err: any) {
-  //       setError(err);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [axiosPrivates, method, url, data, config]);
 
   const apiHandler = async ({
     method,
     url,
     data = null,
-    config = null,
+    config = undefined,
   }: {
     method: 'get' | 'put' | 'post' | 'delete';
     url: string;
-    data?: any;
-    config?: AxiosRequestConfig<any> | null;
+    config?: AxiosRequestConfig<any> | undefined;
+    data?: any | null;
   }) => {
-    try {
-      axiosPrivates[method](url, config, data)
-        .then((res) => {
-          setResponse(res.data);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } catch (err: any) {
-      setError(err);
-    }
-  };
+    const isGetData = method === 'get';
 
+    axiosPrivates[method](
+      url,
+      isGetData ? config : data,
+      isGetData ? undefined : config
+    )
+      .then((res) => {
+        setResponse(res.data);
+        return response;
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
+      .catch((err: AxiosErrorData) => {
+        setError(err);
+      });
+  };
   return { response, error, isLoading, apiHandler };
 }

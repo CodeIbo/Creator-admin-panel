@@ -2,29 +2,30 @@ import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Container } from '@mui/material';
 import DynamicTable from '../../Components/DynamicTable/DynamicTable';
 import useFetch from '../../Services/Hooks/useFetch';
+import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+import { BlogAttributes } from '../../Models/Api/blog.model';
 
-function Blog() {
-  const [fetchedData, setFetchedData] = useState<any>({});
-  const { response, isLoading, error, apiHandler } = useFetch();
+function Blogs() {
+  const [fetchedData, setFetchedData] = useState<
+    object | AxiosResponseTypedData<BlogAttributes>
+  >({});
+  const { response, isLoading, apiHandler } = useFetch();
   useEffect(() => {
     apiHandler({
       method: 'get',
       url: 'blog',
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    if (response !== null) {
+    if (response) {
       setFetchedData(response);
-      console.log(fetchedData.data);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response, fetchedData]);
 
   return (
     <Container>
-      {!isLoading && fetchedData?.data && (
-        <DynamicTable data={fetchedData?.data} dataName="blog" />
+      {!isLoading && 'data' in fetchedData && (
+        <DynamicTable data={fetchedData.data} dataName="blog" />
       )}
       {isLoading && (
         <Box sx={{ display: 'flex' }}>
@@ -35,4 +36,4 @@ function Blog() {
   );
 }
 
-export default Blog;
+export default Blogs;

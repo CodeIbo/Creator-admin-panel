@@ -1,8 +1,89 @@
 {
   "blog": {
-    "post_name": "Post Name",
-    "post_url": "Post Url",
-    "publication_date": "Publication Date",
-    "manage": "Manage Blog"
+    "name": {
+      "header": "Blog Name"
+    },
+    "children": {
+      "header": "Articles",
+      "key": "blog_key",
+      "api_url": "article",
+      "dashboard_url": "articles"
+    },
+    "url": {
+      "header": "Blog Url"
+    },
+    "action": {
+      "header": "Manage Blog"
+    }
+  },
+  "article": {
+    "article_title": {
+      "header": "Article Title"
+    },
+    "url": {
+      "header": "Article Url"
+    },
+    "date": {
+      "header": "Date"
+    },
+    "action": {
+      "header": "Manage Article"
+    }
+  },
+  "podcast": {
+    "name": {
+      "header": "Podcast Name"
+    },
+    "children": {
+      "header": "Episodes",
+      "key": "podcast_key",
+      "api_url": "episode",
+      "dashboard_url": "episodes"
+    },
+    "url": {
+      "header": "Podcast Url"
+    },
+    "action": {
+      "header": "Manage Podcast"
+    }
+  },
+  "episode": {
+    "episode_title": {
+      "header": "Episode Title"
+    },
+    "url": {
+      "header": "Episode Url"
+    },
+    "date": {
+      "header": "Date"
+    },
+    "action": {
+      "header": "Manage Episode"
+    }
+  },
+  "users": {
+    "email": {
+      "header": "Email"
+    },
+    "access_lvl": {
+      "header": "Access Lvl"
+    },
+    "action": {
+      "header": "Manage User"
+    }
+  },
+  "pages": {
+    "name": {
+      "header": "Page Name"
+    },
+    "url": {
+      "header": "Page Url"
+    },
+    "page_category": {
+      "header": "Page Category"
+    },
+    "action": {
+      "header": "Manage Episode"
+    }
   }
 }

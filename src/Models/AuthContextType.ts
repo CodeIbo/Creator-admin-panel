@@ -1,13 +1,7 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
 
 type AuthContextType = {
-  auth?:
-  | {
-    email?: string;
-    accessToken: string;
-  }
-  | object;
+  auth?: { email?: string; accessToken: string } | object;
   setAuth: React.Dispatch<React.SetStateAction<object>>;
 };
 

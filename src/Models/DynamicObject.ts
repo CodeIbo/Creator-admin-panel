@@ -1,4 +1,4 @@
 type DynamicObject = {
-  [key: string]: string;
+  [key: string]: any;
 };
 export default DynamicObject;

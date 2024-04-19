@@ -1,3 +1,16 @@
-type DataNames = 'blog';
+export type TableDataNames =
+  | 'blog'
+  | 'article'
+  | 'podcast'
+  | 'episode'
+  | 'users'
+  | 'pages';
 
-export default DataNames;
+export type FormDataNames =
+  | 'blog'
+  | 'article'
+  | 'podcast'
+  | 'episode'
+  | 'users'
+  | 'pages'
+  | 'menu';

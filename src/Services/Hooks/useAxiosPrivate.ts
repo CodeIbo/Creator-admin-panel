@@ -1,22 +1,21 @@
 import { useEffect } from 'react';
+import _ from 'lodash';
 import { axiosPrivate } from '../Api/Axios';
 import useRefreshToken from './userRefreshToken';
 import useAuth from './useAuth';
 
 const useAxiosPrivate = () => {
-  const refresh = useRefreshToken();
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore: Unreachable code error
   const { auth } = useAuth();
+  const refresh = useRefreshToken();
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
-        if (!config.headers.Authorization) {
-          // eslint-disable-next-line no-param-reassign
-          config.headers.Authorization = `Bearer ${auth?.accessToken}`;
+        const configModified = _.cloneDeep(config);
+        if (!configModified.headers.Authorization) {
+          configModified.headers.Authorization = `Bearer ${auth?.accessToken}`;
         }
-        return config;
+        return configModified;
       },
       (error) => Promise.reject(error)
     );
@@ -24,13 +23,20 @@ const useAxiosPrivate = () => {
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => response,
       async (error) => {
-        console.log(error);
         const prevRequest = error?.config;
-        if (error?.response?.statusCode === 403 || prevRequest?.sent) {
+        if (
+          (error?.response?.status === 401 ||
+            error?.response?.status === 403) &&
+          !prevRequest?.sent
+        ) {
           prevRequest.sent = true;
+
           const newAccessToken = await refresh();
-          prevRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          return axiosPrivate(prevRequest);
+          if (newAccessToken) {
+            prevRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return axiosPrivate(prevRequest);
+          }
+          return Promise.reject(error);
         }
         return Promise.reject(error);
       }

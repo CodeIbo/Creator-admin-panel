@@ -1,72 +1,36 @@
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Snackbar } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import { SeverityTypes } from '../../Models/AlertType';
 
-function AlertDialog({
-  actionHandler,
-  open,
-  setOpen,
-  title,
-  text,
-  buttonNames,
-  buttonPosition,
-}: {
-  actionHandler: Dispatch<SetStateAction<boolean>>;
-  open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-  title: string;
-  text?: string;
-  buttonNames?: {
-    agree: string;
-    disagree: string;
-  };
-  buttonPosition?: string | 'end';
-}) {
-  const handleClose = (action: boolean) => {
-    setOpen(false);
-    actionHandler(action);
+function AlertDialog() {
+  const { alert, triggerAlert } = useAlert();
+
+  const handleClose = (
+    _event?: React.SyntheticEvent<Element, Event> | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    triggerAlert('', 'info');
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={() => {
-        handleClose(false);
-      }}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
+    <Snackbar
+      open={alert.message !== ''}
+      autoHideDuration={6000}
+      onClose={handleClose}
     >
-      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
-      {text && (
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {text}
-          </DialogContentText>
-        </DialogContent>
-      )}
-
-      <DialogActions sx={{ justifyContent: buttonPosition || 'end' }}>
-        <Button
-          onClick={() => {
-            handleClose(true);
-          }}
-        >
-          {buttonNames?.agree || 'Agree'}
-        </Button>
-        <Button
-          onClick={() => {
-            handleClose(false);
-          }}
-          autoFocus
-        >
-          {buttonNames?.disagree || 'Disagree'}
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <MuiAlert
+        onClose={handleClose}
+        severity={(alert.type as SeverityTypes) || 'info'}
+        elevation={6}
+        variant="filled"
+      >
+        {alert.message}
+      </MuiAlert>
+    </Snackbar>
   );
 }
 

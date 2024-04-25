@@ -2,8 +2,8 @@
 
 > The goal of application was create ecosystem which one can create content to pages without deploying changes and be scalable as easy as possible. Stack of application include Backend ( **Mysql 8.033** , **Node.js & express** suported via **sequelizer** ). Admin Panel ( **React 18.2** ). Front-End ( **Angular 14.06** ) . Stack is [dockerized](https://www.docker.com/ 'dockerized'), for more accessability in diffrent enviroment. Every section is described in separate repository
 
-1. [API - Gtihub](https://github.com/Ibonom/BlogApi)
-2. [Front-end - Gtihub](https://github.com/Ibonom/BlogFrontEnd)
+1. [API - Gtihub](https://github.com/Ibonom/Creator777-API)
+2. [Front-end - Gtihub](https://github.com/Ibonom/Creator777-Front-end)
 
 <br>
 

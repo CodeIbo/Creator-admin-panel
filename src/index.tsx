@@ -1,17 +1,28 @@
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { BrowserRouter } from "react-router-dom";
-import { UserContextProvider } from "./Context/UserContext";
-import "./scss/global-imports.scss";
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { CookiesProvider } from 'react-cookie';
+import App from './App';
+import { AuthProvider } from './Services/Context/Auth/AuthProvider';
+import { AlertProvider } from './Services/Context/Alert/AlertProvider';
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById('root') as HTMLElement
 );
 root.render(
   <BrowserRouter>
-    <UserContextProvider>
-      <App />
-    </UserContextProvider>
+    <CookiesProvider
+      defaultSetOptions={{
+        secure: true,
+        maxAge: 300,
+        sameSite: true,
+        path: '/',
+      }}
+    >
+      <AuthProvider>
+        <AlertProvider>
+          <App />
+        </AlertProvider>
+      </AuthProvider>
+    </CookiesProvider>
   </BrowserRouter>
 );
-

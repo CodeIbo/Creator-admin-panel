@@ -44,35 +44,48 @@ function Dashboard() {
       >
         <Routes>
           <Route path="" element={<Home />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<EditBlog />} />
-          <Route path="/blog/new" element={<NewBlog />} />
 
-          <Route path="/articles" element={<Article />} />
-          <Route path="/articles/:id" element={<EditArticlePost />} />
-          <Route path="/articles/new" element={<NewArticlePost />} />
+          <Route path="/blog">
+            <Route path="" element={<Blog />} />
+            <Route path="edit/:id" element={<EditBlog />} />
+            <Route path="new" element={<NewBlog />} />
+            <Route path=":componentKey">
+              <Route path="" element={<Article />} />
+              <Route path="new" element={<NewArticlePost />} />
+              <Route path="edit/:id" element={<EditArticlePost />} />
+            </Route>
+          </Route>
 
-          <Route path="/podcast" element={<Podcast />} />
-          <Route path="/podcast/:id" element={<EditPodcast />} />
-          <Route path="/podcast/new" element={<NewPodcast />} />
+          <Route path="/podcast">
+            <Route path="" element={<Podcast />} />
+            <Route path="new" element={<NewPodcast />} />
+            <Route path="edit/:id" element={<EditPodcast />} />
+            <Route path=":componentKey">
+              <Route path="" element={<Episode />} />
+              <Route path="new" element={<NewEpisodePost />} />
+              <Route path="edit/:id" element={<EditEpisodePost />} />
+            </Route>
+          </Route>
 
-          <Route path="/episodes" element={<Episode />} />
-          <Route path="/episodes/:id" element={<EditEpisodePost />} />
-          <Route path="/episodes/new" element={<NewEpisodePost />} />
+          <Route path="/users">
+            <Route path="" element={<Users />} />
+            <Route path="new" element={<NewUser />} />
+            <Route path="edit/:id" element={<EditUser />} />
+          </Route>
 
-          <Route path="/users" element={<Users />} />
-          <Route path="/users/:id" element={<EditUser />} />
-          <Route path="/users/new" element={<NewUser />} />
+          <Route path="/pages">
+            <Route path="" element={<Pages />} />
+            <Route path="new" element={<NewPage />} />
+            <Route path="edit/:id" element={<EditPage />} />
+          </Route>
 
-          <Route path="/pages" element={<Pages />} />
-          <Route path="/pages/:id" element={<EditPage />} />
-          <Route path="/pages/new" element={<NewPage />} />
+          <Route path="/menu">
+            <Route path="" element={<Menu />} />
+            <Route path="new" element={<NewMenu />} />
+            <Route path="edit/:id" element={<EditMenu />} />
+          </Route>
 
           <Route path="/gallery" element={<Gallery />} />
-
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/menu/new" element={<NewMenu />} />
-          <Route path="/menu/:id" element={<EditMenu />} />
         </Routes>
       </Container>
     </>

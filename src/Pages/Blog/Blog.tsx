@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Container } from '@mui/material';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import DynamicTable from '../../Components/DynamicTable/DynamicTable';
 import useFetch from '../../Services/Hooks/useFetch';
 import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
@@ -9,7 +9,7 @@ function Blogs() {
   const [fetchedData, setFetchedData] = useState<
     object | AxiosResponseTypedData<BlogAttributes>
   >({});
-  const { response, isLoading, apiHandler } = useFetch();
+  const { response, isLoading, apiHandler, error } = useFetch();
   useEffect(() => {
     apiHandler({
       method: 'get',
@@ -20,17 +20,24 @@ function Blogs() {
     if (response) {
       setFetchedData(response);
     }
-  }, [response, fetchedData]);
+  }, [response]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return <Typography component="h3">{error.message}</Typography>;
+  }
 
   return (
     <Container>
-      {!isLoading && 'data' in fetchedData && (
+      {'data' in fetchedData && (
         <DynamicTable data={fetchedData.data} dataName="blog" />
-      )}
-      {isLoading && (
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
       )}
     </Container>
   );

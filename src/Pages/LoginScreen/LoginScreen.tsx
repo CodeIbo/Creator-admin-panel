@@ -1,6 +1,8 @@
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+
 import axios from '../../Services/Api/Axios';
 import useAuth from '../../Services/Hooks/useAuth';
 import { useAlert } from '../../Services/Context/Alert/AlertProvider';
@@ -11,6 +13,7 @@ function LoginScreen() {
   const navigation = useNavigate();
   const { setAuth } = useAuth();
   const { triggerAlert } = useAlert();
+  const [cookies, setCookie] = useCookies(['user']);
 
   const Login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,8 +27,10 @@ function LoginScreen() {
       const accessToken = response?.data?.data?.token;
       if (accessToken) {
         setAuth({ email, accessToken });
+        setCookie('user', { email, accessToken });
         setEmail('');
         setPassword('');
+        triggerAlert('Logged', 'success');
         navigation('/dashboard');
       } else {
         triggerAlert(response.statusText, 'warning');

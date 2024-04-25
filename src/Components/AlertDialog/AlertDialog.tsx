@@ -1,5 +1,6 @@
 import { Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
+
 import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 import { SeverityTypes } from '../../Models/AlertType';
 

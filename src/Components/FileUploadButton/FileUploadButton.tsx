@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { ChangeEvent, useEffect, useRef } from 'react';
 import useFetch from '../../Services/Hooks/useFetch';
-import { ImageAttributes } from '../../Models/Api/image.model';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -18,8 +18,9 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 function FileUploadButton({ onAdd }: { onAdd: (newItem: any) => void }) {
-  const { apiHandler, response, error } = useFetch();
+  const { apiHandler, response, error, isLoading } = useFetch();
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const { triggerAlert } = useAlert();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files ? event.target.files[0] : null;
@@ -31,26 +32,26 @@ function FileUploadButton({ onAdd }: { onAdd: (newItem: any) => void }) {
         url: '/image',
         data: formData,
         config: { headers: { 'Content-Type': 'multipart/form-data' } },
-      })
-        .then(() => {
-          if (inputFileRef.current) {
-            inputFileRef.current.value = '';
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      }).then(() => {
+        if (inputFileRef.current) {
+          inputFileRef.current.value = '';
+        }
+      });
     }
   };
   useEffect(() => {
     if (response?.data) {
       onAdd(response.data);
+
+      triggerAlert('Image Added', 'success');
     }
-  }, [response]);
+    if (error) {
+      triggerAlert(error.message, 'error');
+    }
+  }, [isLoading, error]);
   return (
     <Button
       component="label"
-      role={undefined}
       variant="contained"
       startIcon={<CloudUploadIcon />}
       tabIndex={-1}

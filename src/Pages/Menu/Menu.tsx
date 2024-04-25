@@ -7,13 +7,14 @@ import {
   DraggableStateSnapshot,
   DropResult,
 } from 'react-beautiful-dnd';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
   ButtonGroup,
   CircularProgress,
   Container,
+  Link,
   List,
   ListItem,
   ListItemText,
@@ -22,18 +23,14 @@ import {
 } from '@mui/material';
 import { isArray } from 'lodash';
 import { blue } from '@mui/material/colors';
+
 import useFetch from '../../Services/Hooks/useFetch';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
 import { MenuAttributes } from '../../Models/Api/menu.model';
 import LinkButton from '../../Components/LinkButton/LinkButton';
 
 function Menu() {
   const { apiHandler, response, isLoading, error } = useFetch();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<MenuAttributes> | object
-  >({});
   const [items, setItems] = useState<MenuAttributes[] | []>([]);
-
   useEffect(() => {
     apiHandler({
       method: 'get',
@@ -41,13 +38,10 @@ function Menu() {
     });
   }, []);
   useEffect(() => {
-    if (response) {
-      setFetchedData(response);
-      if (isArray(response.data)) {
-        setItems(response.data);
-      }
+    if (response && isArray(response.data)) {
+      setItems(response.data);
     }
-  }, [response, fetchedData]);
+  }, [response]);
 
   useEffect(() => {
     if (items.length > 0) {
@@ -172,7 +166,8 @@ function Menu() {
                       secondaryAction={
                         <ButtonGroup sx={{ gap: 1 }}>
                           <LinkButton
-                            to={item.id}
+                            to={`edit/${item.id}`}
+                            component={Link}
                             buttonText="edit"
                             color="primary"
                             variant="contained"
@@ -209,4 +204,4 @@ function Menu() {
   );
 }
 
-export default memo(Menu);
+export default Menu;

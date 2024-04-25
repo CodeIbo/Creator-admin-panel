@@ -5,4 +5,5 @@ export interface UrlAttributes extends Meta {
   url: string;
   name: string;
   created_at: string;
+  page_category: string;
 }

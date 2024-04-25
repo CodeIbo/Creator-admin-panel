@@ -1,28 +1,27 @@
+import { useEffect, useState } from 'react';
 import {
   Box,
   FormControl,
   InputLabel,
+  LinearProgress,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { isArray } from 'lodash';
-import useFetch from '../../Services/Hooks/useFetch';
-import DropdownParams from '../../Models/DropdownParams';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+
 import { UrlAttributes } from '../../Models/Api/url.model';
+import DropdownParams from '../../Models/DropdownParams';
+import useFetch from '../../Services/Hooks/useFetch';
 
 function Dropdown({
   dropdownHandler,
   api_url,
   label,
-  dropdownValue,
+  dropdownValue = '',
 }: DropdownParams) {
   const { apiHandler, response, isLoading, error } = useFetch();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<UrlAttributes> | object
-  >({});
   const [urlList, setUrlList] = useState<UrlAttributes[] | []>([]);
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -42,13 +41,25 @@ function Dropdown({
     });
   }, []);
   useEffect(() => {
-    if (response) {
-      setFetchedData(response);
-      if (isArray(response.data)) {
-        setUrlList(response.data);
-      }
+    if (response && isArray(response.data)) {
+      setUrlList(response.data);
     }
-  }, [response]);
+  }, [isLoading]);
+
+  if (error) {
+    return (
+      <Box sx={{ minWidth: '100%' }}>
+        <Typography>{error.message}</Typography>
+      </Box>
+    );
+  }
+  if (isLoading) {
+    return (
+      <Box sx={{ minWidth: '100%' }}>
+        <LinearProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minWidth: '100%' }}>
@@ -56,7 +67,7 @@ function Dropdown({
         <InputLabel id={label}>{label}</InputLabel>
         <Select
           labelId={label}
-          value={dropdownValue}
+          value={dropdownValue ?? ''}
           label={label}
           onChange={handleChange}
         >
@@ -64,7 +75,7 @@ function Dropdown({
             urlList.map((url) => {
               return (
                 <MenuItem key={url.id} value={url.id}>
-                  /{url.url}
+                  /{url.url} ({url.page_category})
                 </MenuItem>
               );
             })}

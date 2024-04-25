@@ -1,4 +1,5 @@
-import { Box, Container, Paper, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
+
 import LinkButton from '../../Components/LinkButton/LinkButton';
 
 function ErrorPage() {

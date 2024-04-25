@@ -103,7 +103,7 @@ function DynamicTable({
                           <Button
                             variant="outlined"
                             component={Link}
-                            to={singleObject.id}
+                            to={`edit/${singleObject.id}`}
                           >
                             Edit
                           </Button>
@@ -124,18 +124,13 @@ function DynamicTable({
                         <TableCell sx={{ textAlign: 'center' }} key={key}>
                           <Link
                             to={{
-                              pathname: `../${jsonUntypedData[
-                                key as keyof TableHelper[TableDataNames]
-                              ]?.dashboard_url}`,
-                              search: `key=${
+                              pathname:
                                 singleObject[
                                   jsonUntypedData[
                                     key as keyof TableHelper[TableDataNames]
                                   ]?.key as keyof ApiCallback
-                                ]
-                              }`,
+                                ],
                             }}
-                            relative="path"
                           >
                             {`${jsonUntypedData[
                               key as keyof TableHelper[TableDataNames]
@@ -151,7 +146,7 @@ function DynamicTable({
                           textAlign="center"
                           sx={{ color: 'red' }}
                         >
-                          ERROR
+                          JSON ERROR
                         </Typography>
                       </TableCell>
                     );

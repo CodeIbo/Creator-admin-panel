@@ -15,7 +15,7 @@ function InputArray({ key, arrayDataSet, arrayData }: InputArrayType) {
       const lowerText = inputValue.toLowerCase();
       const duplicate: boolean = arrayData.includes(lowerText);
       setIsError(duplicate);
-      if (!duplicate) {
+      if (!duplicate && lowerText.length > 0) {
         arrayData.push(lowerText);
         arrayDataSet(arrayData);
       }

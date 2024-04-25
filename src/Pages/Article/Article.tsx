@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Container } from '@mui/material';
-import { useSearchParams } from 'react-router-dom';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
+
 import DynamicTable from '../../Components/DynamicTable/DynamicTable';
 import useFetch from '../../Services/Hooks/useFetch';
-import DynamicObject from '../../Models/DynamicObject';
 import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
 import { ArticlesAttributes } from '../../Models/Api/article.model';
 
@@ -12,14 +12,14 @@ function Article() {
     AxiosResponseTypedData<ArticlesAttributes> | object
   >({});
   const { response, isLoading, error, apiHandler } = useFetch();
-  const [searchParams] = useSearchParams();
+  const { componentKey } = useParams();
   useEffect(() => {
     apiHandler({
       method: 'get',
       url: `article`,
       config: {
         params: {
-          blog_key: searchParams.get('key'),
+          blog_key: componentKey,
         },
       },
     });
@@ -28,16 +28,22 @@ function Article() {
     if (response) {
       setFetchedData(response);
     }
-  }, [response, fetchedData, error]);
+  }, [response]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return <Typography component="h3">{error.message}</Typography>;
+  }
   return (
     <Container>
-      {!isLoading && 'data' in fetchedData && (
+      {'data' in fetchedData && (
         <DynamicTable data={fetchedData?.data} dataName="article" />
-      )}
-      {isLoading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <CircularProgress />
-        </Box>
       )}
     </Container>
   );

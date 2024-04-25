@@ -1,11 +1,11 @@
 import AceEditor from 'react-ace';
 import ace from 'ace-builds/src-noconflict/ace';
-import './CodeEditor.scss';
 
 import 'ace-builds/src-noconflict/mode-html';
 import 'ace-builds/src-noconflict/theme-chaos';
 import 'ace-builds/src-noconflict/ext-language_tools';
 
+import './CodeEditor.scss';
 import EditorParams from '../../Models/EditorHandler';
 
 function Editor({ editorHandler, value }: EditorParams) {

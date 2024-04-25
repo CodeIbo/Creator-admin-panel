@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-import { createContext, useState } from 'react';
+import { createContext, useState, useMemo } from 'react';
 import ChildProp from '../../../Models/ChildrenType';
 
 interface AuthState {
@@ -19,17 +18,21 @@ const defaultAuthState: AuthState = {
 
 const AuthContext = createContext<AuthContextType>({
   auth: defaultAuthState,
-  setAuth: () => {}, // Empty implementation
+  setAuth: () => {},
 });
 
 export function AuthProvider({ children }: ChildProp) {
   const [auth, setAuth] = useState(defaultAuthState);
 
-  return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      auth,
+      setAuth,
+    }),
+    [auth]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export default AuthContext;

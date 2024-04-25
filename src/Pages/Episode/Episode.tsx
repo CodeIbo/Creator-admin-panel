@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Container } from '@mui/material';
-import { useSearchParams } from 'react-router-dom';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
+
 import DynamicTable from '../../Components/DynamicTable/DynamicTable';
 import useFetch from '../../Services/Hooks/useFetch';
 import { EpisodeAttributes } from '../../Models/Api/episode.model';
@@ -11,14 +12,14 @@ function Episode() {
     AxiosResponseTypedData<EpisodeAttributes> | object
   >({});
   const { response, isLoading, error, apiHandler } = useFetch();
-  const [searchParams] = useSearchParams();
+  const { componentKey } = useParams();
   useEffect(() => {
     apiHandler({
       method: 'get',
       url: `episode`,
       config: {
         params: {
-          podcast_key: searchParams.get('key'),
+          podcast_key: componentKey,
         },
       },
     });
@@ -27,17 +28,23 @@ function Episode() {
     if (response) {
       setFetchedData(response);
     }
-  }, [response, fetchedData, error]);
+  }, [response]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return <Typography component="h3">{error.message}</Typography>;
+  }
 
   return (
     <Container>
-      {!isLoading && 'data' in fetchedData && (
+      {'data' in fetchedData && (
         <DynamicTable data={fetchedData?.data} dataName="episode" />
-      )}
-      {isLoading && (
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
       )}
     </Container>
   );

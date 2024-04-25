@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { Typography } from '@mui/material';
@@ -20,7 +20,7 @@ import { FormDataNames } from '../../Models/dataNames';
 import Dropdown from '../Dropdown/Dropdown';
 
 function Form({ dataType, data, mode }: FormType) {
-  const { id } = useParams();
+  const { id, componentKey } = useParams();
   const navigate = useNavigate();
   const { emptyForm } = useFormGenerator(dataType, 'regex');
   const { htmlInput, setHtmlInput, arrayInput, setArrayInput } =
@@ -39,6 +39,7 @@ function Form({ dataType, data, mode }: FormType) {
   const { triggerAlert } = useAlert();
   const location = useLocation();
   const urlData = location.state;
+  const test = useParams();
   const inputHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     data_key: string,
@@ -92,9 +93,9 @@ function Form({ dataType, data, mode }: FormType) {
       }
       if (
         jsonUntypedData[key as keyof FormHelper[FormDataNames]]?.key &&
-        urlData?.urlKey
+        componentKey
       ) {
-        clonedFormData[key as keyof ApiCallback] = urlData.urlKey;
+        clonedFormData[key as keyof ApiCallback] = componentKey;
       }
     });
     if ('url_id' in clonedFormData) {
@@ -135,7 +136,9 @@ function Form({ dataType, data, mode }: FormType) {
       }
       if (response?.statusCode === 200 || response?.statusCode === 201) {
         triggerAlert(id ? 'Updated' : 'Added', 'info');
-        navigate(-1);
+        navigate('../..', {
+          relative: 'path',
+        });
       }
     }
   }, [error, response, isLoading]);
@@ -300,7 +303,9 @@ function Form({ dataType, data, mode }: FormType) {
         })}
         <ButtonGroup variant="contained">
           <LinkButton
-            onClick={() => navigate(-1)}
+            component={Link}
+            to="../.."
+            relative="path"
             sx={{
               width: '10rem',
             }}

@@ -20,7 +20,7 @@ function Pages() {
     if (response) {
       setFetchedData(response);
     }
-  }, [response, fetchedData]);
+  }, [response]);
 
   return (
     <Container>

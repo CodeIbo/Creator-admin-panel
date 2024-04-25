@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import { useParams } from 'react-router-dom';
 import { isArray } from 'lodash';
+import { Typography, CircularProgress, Box, Container } from '@mui/material';
+
 import Form from '../../Components/Form/Form';
 import useFetch from '../../Services/Hooks/useFetch';
 import { BlogAttributes } from '../../Models/Api/blog.model';
@@ -14,7 +13,7 @@ function EditBlog() {
   const [fetchedData, setFetchedData] = useState<
     AxiosResponseTypedData<BlogAttributes> | object
   >({});
-  const { response, isLoading, apiHandler } = useFetch();
+  const { response, isLoading, apiHandler, error } = useFetch();
   useEffect(() => {
     apiHandler({
       method: 'get',
@@ -27,6 +26,17 @@ function EditBlog() {
       setFetchedData(response);
     }
   }, [response, fetchedData]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return <Typography component="h3">{error.message}</Typography>;
+  }
 
   return (
     <Container>

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Typography, Container, Box, CircularProgress } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { isArray } from 'lodash';
+
 import Form from '../../Components/Form/Form';
 import useFetch from '../../Services/Hooks/useFetch';
 import { EpisodeAttributes } from '../../Models/Api/episode.model';
@@ -14,7 +13,7 @@ function EditEpisodePost() {
   const [fetchedData, setFetchedData] = useState<
     AxiosResponseTypedData<EpisodeAttributes> | object
   >({});
-  const { response, isLoading, apiHandler } = useFetch();
+  const { response, isLoading, apiHandler, error } = useFetch();
   useEffect(() => {
     apiHandler({
       method: 'get',
@@ -26,7 +25,18 @@ function EditEpisodePost() {
     if (response) {
       setFetchedData(response);
     }
-  }, [response, fetchedData]);
+  }, [response]);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return <Typography component="h3">{error.message}</Typography>;
+  }
 
   return (
     <Container>

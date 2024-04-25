@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Container, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Typography,
+  Grid,
+} from '@mui/material';
 import _ from 'lodash';
+
 import { ImageAttributes } from '../../Models/Api/image.model';
 import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
 import useFetch from '../../Services/Hooks/useFetch';
@@ -25,7 +31,7 @@ function Gallery() {
     }
   }, [response]);
 
-  const onAdd = (newItem: any) => {
+  const onAdd = (newItem: ImageAttributes) => {
     setFetchedData((prev) => {
       if ('data' in prev && prev.data && _.isArray(prev.data)) {
         prev.data.unshift(newItem);

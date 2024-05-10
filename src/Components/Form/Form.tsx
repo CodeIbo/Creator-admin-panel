@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { Typography } from '@mui/material';
@@ -37,9 +37,6 @@ function Form({ dataType, data, mode }: FormType) {
     position_on_list: 0,
   });
   const { triggerAlert } = useAlert();
-  const location = useLocation();
-  const urlData = location.state;
-  const test = useParams();
   const inputHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     data_key: string,

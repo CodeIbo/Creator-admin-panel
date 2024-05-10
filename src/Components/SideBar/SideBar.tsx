@@ -8,6 +8,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LanguageIcon from '@mui/icons-material/Language';
 import ImageIcon from '@mui/icons-material/Image';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import TagIcon from '@mui/icons-material/Tag';
 
 import SideBarHandlerType from '../../Models/SideBarHandlerType';
 import ListItemCustom from './ListItem/ListItem';
@@ -37,6 +38,12 @@ function SideBar({ sideBarState, sideBarHandler }: SideBarHandlerType) {
               IconElement={MenuBookIcon}
               name="Menu"
               urlAdress="menu"
+            />
+
+            <ListItemCustom
+              IconElement={TagIcon}
+              name="Social Media"
+              urlAdress="social-media"
             />
 
             <ListItemCustom

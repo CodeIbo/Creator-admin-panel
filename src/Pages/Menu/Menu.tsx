@@ -1,49 +1,78 @@
 import { DropResult } from 'react-beautiful-dnd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Container } from '@mui/material';
-import { isArray } from 'lodash';
 
-import useFetch from '../../Services/Hooks/useFetch';
+import { useMutation, useQuery } from 'react-query';
+
 import { MenuAttributes } from '../../Models/Api/menu.model';
 import LinkButton from '../../Components/LinkButton/LinkButton';
 import DraggableArea from '../../Components/DraggableArea/DraggableArea';
+import {
+  AxiosErrorData,
+  AxiosResponseBase,
+  AxiosResponseTypedArray,
+} from '../../Models/AxiosResponse';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import fetchAxios from '../../Services/Api/fetchAxios';
 
 function Menu() {
-  const { apiHandler, response, isLoading, error } = useFetch();
   const [items, setItems] = useState<MenuAttributes[] | []>([]);
-  useEffect(() => {
-    apiHandler({
-      method: 'get',
-      url: 'menu',
-    });
-  }, []);
-  useEffect(() => {
-    if (response && isArray(response.data)) {
-      setItems(response.data);
-    }
-  }, [response]);
+  const axiosPrivate = useAxiosPrivate();
+  const { triggerAlert } = useAlert();
 
-  useEffect(() => {
-    if (items.length > 0) {
-      apiHandler({
-        method: 'put',
+  const { isLoading, error } = useQuery<
+    AxiosResponseTypedArray<MenuAttributes>,
+    AxiosErrorData
+  >({
+    queryKey: ['menu'],
+    queryFn: async () =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: 'menu',
+        method: 'get',
+      }),
+    onSuccess(response) {
+      setItems(response.data);
+    },
+  });
+  const postMenu = useMutation(
+    async (menuItems: MenuAttributes[]) =>
+      fetchAxios({
+        axios: axiosPrivate,
         url: 'menu/sort',
-        data: { menuItems: items },
-      });
+        method: 'put',
+        data: { menuItems },
+      }),
+    {
+      onSuccess: (response: AxiosResponseBase) =>
+        triggerAlert(response.message, 'success'),
     }
-  }, [items]);
+  );
+
+  const deletetMenu = useMutation(
+    async (id: string) =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `menu/${id}`,
+        method: 'delete',
+      }),
+    {
+      onMutate(id) {
+        setItems((prev) =>
+          prev.filter((obj) => {
+            return obj.id !== id;
+          })
+        );
+      },
+      onSuccess: (response: AxiosResponseBase) =>
+        triggerAlert(response.message, 'success'),
+      onError: (err: AxiosErrorData) => triggerAlert(err.message, 'error'),
+    }
+  );
 
   const deleteHandler = (id: string) => {
-    apiHandler({
-      method: 'delete',
-      url: `menu/${id}`,
-    }).then(() => {
-      setItems((prev) =>
-        prev.filter((obj) => {
-          return obj.id !== id;
-        })
-      );
-    });
+    deletetMenu.mutate(id);
   };
 
   const onDragEnd = (result: DropResult) => {
@@ -67,8 +96,8 @@ function Menu() {
       return copyMenuItem;
     });
     setItems(updatedMenuIndexArray);
+    postMenu.mutate(updatedMenuIndexArray);
   };
-
   return (
     <Container>
       <LinkButton

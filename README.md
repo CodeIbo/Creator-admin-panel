@@ -29,11 +29,11 @@ Key features include:
 
 ## TODO
 
-- [ ] **Welcome Screen Creation**: Design and implement a welcome screen that greets users upon successful login. This feature aims to enhance user experience by providing a friendly and informative entry point to the application.
+- [x] **Welcome Screen Creation**: Design and implement a welcome screen that greets users upon successful login. This feature aims to enhance user experience by providing a friendly and informative entry point to the application.
 
 - [ ] **Integration with External Analytics Tools**: Integrate an analytics panel to monitor website traffic. This will involve connecting with external tools to display real-time analytics, helping us understand user interactions and improve site performance.
 
-- [ ] **Refactoring Form and Table Components**: Break down the existing Form and Table components into smaller, more manageable units. This effort will reduce the complexity of our codebase, making it easier to maintain and extend these components.
+- [x] **Refactoring Form and Table Components**: Break down the existing Form and Table components into smaller, more manageable units. This effort will reduce the complexity of our codebase, making it easier to maintain and extend these components.
 
 - [ ] **Writing Tests**: Develop and write tests to ensure all components function correctly and meet expected behaviors. This will improve reliability and stability across the application.
 

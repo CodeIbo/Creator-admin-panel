@@ -1,11 +1,6 @@
 import { Meta } from './meta.model';
 
-export type PageCategory =
-  | 'custom-page'
-  | 'blog'
-  | 'article'
-  | 'podcast'
-  | 'episode';
+export type PageCategory = 'page' | 'blog' | 'article' | 'podcast' | 'episode';
 
 export interface PageAttributes extends Meta {
   id: string;

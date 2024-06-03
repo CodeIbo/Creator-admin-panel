@@ -1,37 +1,36 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { Container } from '@mui/material';
+import { useNavigate, useParams } from 'react-router';
 import { useMutation, useQuery } from 'react-query';
+import { Container } from '@mui/material';
 
-import { ArticlesAttributes } from '../../Models/Api/article.model';
+import socialMediaValidation from '../../Api/Validation/socialMedia.validation';
+import { SocialMediaAttributes } from '../../Models/Api/socialMedia.model';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 import {
   AxiosErrorData,
   AxiosResponseTypedObject,
 } from '../../Models/AxiosResponse';
 import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
-import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 import LoadingState from '../../Components/LoadingState/LoadingState';
-import articleValidation from '../../Api/Validation/article.validation';
 import FormGenerator from '../../Components/FormsUI/FormGenerator';
 import fields from '../../Services/Helpers/fieldsTypeSave';
 import fetchAxios from '../../Services/Api/fetchAxios';
 
-type EditArticleAtributes = Omit<ArticlesAttributes, 'id' | 'blog_key'>;
+type EditSMModel = Partial<Pick<SocialMediaAttributes, 'title' | 'link'>>;
 
-function EditArticlePost() {
+function EditSocialMedia() {
   const { id } = useParams();
-  const axiosPrivate = useAxiosPrivate();
   const { triggerAlert } = useAlert();
   const navigation = useNavigate();
-
-  const articleQuery = useQuery<
-    AxiosResponseTypedObject<EditArticleAtributes>,
+  const axiosPrivate = useAxiosPrivate();
+  const socialMediaQuery = useQuery<
+    AxiosResponseTypedObject<SocialMediaAttributes>,
     AxiosErrorData
   >({
-    queryKey: ['article', id],
+    queryKey: ['social-media', id],
     queryFn: () =>
       fetchAxios({
         axios: axiosPrivate,
-        url: `article/${id}`,
+        url: `social-media/${id}`,
         method: 'get',
       }),
     enabled: typeof id === 'string',
@@ -40,18 +39,18 @@ function EditArticlePost() {
     },
   });
 
-  const articleMutation = useMutation(
-    (values: EditArticleAtributes) =>
+  const socialMediaMutation = useMutation(
+    (values: EditSMModel) =>
       fetchAxios({
         axios: axiosPrivate,
-        url: `article/${id}`,
+        url: `social-media/${id}`,
         method: 'put',
         data: values,
       }),
     {
       onSuccess: () => {
-        triggerAlert('Article updated', 'success');
-        navigation('..');
+        triggerAlert('Social Media updated', 'success');
+        navigation(-1);
       },
       onError: (err: AxiosErrorData) => {
         if (err?.response?.data) {
@@ -63,19 +62,21 @@ function EditArticlePost() {
     }
   );
 
-  if (articleQuery.isLoading) return <LoadingState />;
+  if (socialMediaQuery.isLoading) return <LoadingState />;
+
   return (
     <Container>
-      <FormGenerator<EditArticleAtributes>
-        validationSchema={articleValidation}
+      <FormGenerator<SocialMediaAttributes>
+        validationSchema={socialMediaValidation}
         onSubmit={(values, { setSubmitting }) => {
           setSubmitting(false);
-          articleMutation.mutate(values);
+          socialMediaMutation.mutate(values);
         }}
-        fields={fields('article')}
-        fetchedValues={articleQuery.data?.data}
+        fields={fields('social_media')}
+        fetchedValues={socialMediaQuery.data?.data}
       />
     </Container>
   );
 }
-export default EditArticlePost;
+
+export default EditSocialMedia;

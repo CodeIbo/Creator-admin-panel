@@ -1,105 +1,77 @@
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
-import { FormEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
+import { Container } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useMutation } from 'react-query';
 
-import axios from '../../Services/Api/Axios';
+import Cookies from 'js-cookie';
 import useAuth from '../../Services/Hooks/useAuth';
 import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import loginValidation from '../../Api/Validation/login.validation';
+import { Login, LoginResponse } from '../../Models/Api/login.model';
+import LoadingState from '../../Components/LoadingState/LoadingState';
+import fetchAxios from '../../Services/Api/fetchAxios';
+import Axios from '../../Services/Api/Axios';
+import FormGenerator from '../../Components/FormsUI/FormGenerator';
+import fields from '../../Services/Helpers/fieldsTypeSave';
+import {
+  AxiosErrorData,
+  AxiosResponseLoginHandler,
+} from '../../Models/AxiosResponse';
 
 function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigation = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/dashboard';
   const { setAuth } = useAuth();
   const { triggerAlert } = useAlert();
-  const [cookies, setCookie] = useCookies(['user']);
 
-  const Login = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/auth/login', undefined, {
-        headers: {
+  const { mutate, isLoading } = useMutation(
+    (values: Login) =>
+      fetchAxios({
+        axios: Axios,
+        method: 'post',
+        url: 'auth/login',
+        config: { headers: { ...values }, withCredentials: true },
+      }),
+    {
+      onSuccess: (response: AxiosResponseLoginHandler<LoginResponse>) => {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const { email, token, nick_name } = response.data;
+        const lastVisit = Cookies.get('lastVisit');
+        setAuth({
           email,
-          user_password: password,
-        },
-      });
-      const accessToken = response?.data?.data?.token;
-      if (accessToken) {
-        setAuth({ email, accessToken });
-        setCookie('user', { email, accessToken });
-        setEmail('');
-        setPassword('');
+          accessToken: token,
+          nick_name,
+          lastVisited: lastVisit,
+        });
+        localStorage.setItem('user', JSON.stringify({ email, nick_name }));
         triggerAlert('Logged', 'success');
-        navigation('/dashboard');
-      } else {
-        triggerAlert(response.statusText, 'warning');
-      }
-    } catch (err: any) {
-      if (err?.response?.data) {
-        triggerAlert(err?.response?.data?.message, 'error');
-      } else {
-        triggerAlert(err?.message, 'error');
-      }
+        navigation(from, { replace: true });
+      },
+      onError: (err: AxiosErrorData) => {
+        if (err.response?.data.message) {
+          triggerAlert(err.response?.data.message, 'error');
+        } else {
+          triggerAlert('Login Failed', 'error');
+        }
+      },
     }
-  };
+  );
+  if (isLoading) return <LoadingState />;
 
   return (
-    <Container component="main" maxWidth="xs">
-      <form
-        onSubmit={(e) => {
-          Login(e);
+    <Container maxWidth="sm" sx={{ mt: 10 }}>
+      <FormGenerator<Login>
+        validationSchema={loginValidation}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false);
+          mutate(values);
         }}
-      >
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Typography component="h1" variant="h5">
-            Log in
-          </Typography>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-            value={email}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            value={password}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign In
-          </Button>
-        </Box>
-      </form>
+        fields={fields('login')}
+        buttons={{
+          first_button: { show: false },
+          second_button: { name: 'Login' },
+        }}
+      />
     </Container>
   );
 }

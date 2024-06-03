@@ -1,50 +1,84 @@
-import { useEffect, useState } from 'react';
-import { Typography, Box, Container, CircularProgress } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { isArray } from 'lodash';
+import { Container } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import Form from '../../Components/Form/Form';
-import useFetch from '../../Services/Hooks/useFetch';
+import { useMutation, useQuery } from 'react-query';
 import { CustomPageAttributes } from '../../Models/Api/customPage.model';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+import {
+  AxiosErrorData,
+  AxiosResponseTypedObject,
+} from '../../Models/AxiosResponse';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
+import { PageAttributes } from '../../Models/Api/page.model';
+import fetchAxios from '../../Services/Api/fetchAxios';
+import LoadingState from '../../Components/LoadingState/LoadingState';
+import FormGenerator from '../../Components/FormsUI/FormGenerator';
+import pagesValidation from '../../Api/Validation/pages.validation';
+import fields from '../../Services/Helpers/fieldsTypeSave';
+
+type EditPageAttributes = Partial<
+  Omit<CustomPageAttributes, 'id' | 'page_category' | 'page_type'>
+>;
 
 function EditPage() {
   const { id } = useParams();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<CustomPageAttributes> | object
-  >({});
-  const { response, isLoading, apiHandler, error } = useFetch();
-  useEffect(() => {
-    apiHandler({
-      method: 'get',
-      url: `pages/${id}`,
-    });
-  }, []);
+  const axiosPrivate = useAxiosPrivate();
+  const { triggerAlert } = useAlert();
+  const navigation = useNavigate();
 
-  useEffect(() => {
-    if (response) {
-      setFetchedData(response);
+  const pageQuery = useQuery<
+    AxiosResponseTypedObject<PageAttributes>,
+    AxiosErrorData
+  >({
+    queryKey: ['pages', id],
+    queryFn: () =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `pages/${id}`,
+        method: 'get',
+      }),
+    enabled: typeof id === 'string',
+    onError(err) {
+      triggerAlert(err.message, 'error');
+    },
+  });
+
+  const pageMutation = useMutation(
+    (values: EditPageAttributes) =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `pages/${id}`,
+        method: 'put',
+        data: values,
+      }),
+    {
+      onSuccess: () => {
+        triggerAlert('Page updated', 'success');
+        navigation(-1);
+      },
+      onError: (err: AxiosErrorData) => {
+        if (err?.response?.data) {
+          triggerAlert(err?.response?.statusText, 'error');
+        } else {
+          triggerAlert(err?.message, 'error');
+        }
+      },
     }
-  }, [response]);
+  );
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (error) {
-    return <Typography component="h3">{error.message}</Typography>;
-  }
+  if (pageQuery.isLoading) return <LoadingState />;
 
   return (
     <Container>
-      {'data' in fetchedData &&
-        fetchedData.data &&
-        !isArray(fetchedData.data) && (
-          <Form data={fetchedData?.data} dataType="pages" mode="edit" />
-        )}
+      <FormGenerator<PageAttributes>
+        validationSchema={pagesValidation}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false);
+          pageMutation.mutate(values);
+        }}
+        fields={fields('custom_page')}
+        fetchedValues={pageQuery.data?.data}
+      />
     </Container>
   );
 }

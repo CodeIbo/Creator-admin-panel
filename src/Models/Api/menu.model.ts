@@ -4,5 +4,6 @@ export interface MenuAttributes {
   menu_order: number;
   label: string;
   parent_id: string | null;
+  scroll_target: string | null;
   created_at: string;
 }

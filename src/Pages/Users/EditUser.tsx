@@ -1,55 +1,115 @@
-import { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import { useParams } from 'react-router-dom';
-import { isArray } from 'lodash';
-import Form from '../../Components/Form/Form';
-import useFetch from '../../Services/Hooks/useFetch';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery, useMutation } from 'react-query';
 import { UserAttributes } from '../../Models/Api/users.model';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import FormGenerator from '../../Components/FormsUI/FormGenerator';
+import { editUsersValidation } from '../../Api/Validation/users.validation';
+import {
+  AxiosResponseTypedObject,
+  AxiosErrorData,
+} from '../../Models/AxiosResponse';
+import fetchAxios from '../../Services/Api/fetchAxios';
+import fields from '../../Services/Helpers/fieldsTypeSave';
+import LoadingState from '../../Components/LoadingState/LoadingState';
 
 function EditUser() {
   const { id } = useParams();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<UserAttributes> | object
-  >({});
-  const { response, isLoading, error, apiHandler } = useFetch();
-  useEffect(() => {
-    apiHandler({
-      method: 'get',
-      url: `users/${id}`,
-    });
-  }, []);
+  const { triggerAlert } = useAlert();
+  const axiosPrivate = useAxiosPrivate();
+  const navigation = useNavigate();
 
-  useEffect(() => {
-    if (response) {
-      setFetchedData(response);
-      setFetchedData((prev: any) => {
-        return {
-          ...prev,
-          data: {
-            ...prev.data,
-            user_password: '',
-          },
-        };
-      });
+  type EditUserAttributes = Partial<
+    Omit<UserAttributes, 'id' | 'refresh_token' | 'created_at'>
+  >;
+
+  const userQuery = useQuery<
+    AxiosResponseTypedObject<UserAttributes>,
+    AxiosErrorData
+  >({
+    queryKey: ['users', id],
+    queryFn: () =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `users/${id}`,
+        method: 'get',
+      }),
+    enabled: typeof id === 'string',
+    onError(err) {
+      triggerAlert(err.message, 'error');
+    },
+    onSuccess(data) {
+      const dataCopy = { ...data };
+      dataCopy.data.user_password = '';
+      return dataCopy;
+    },
+  });
+
+  const userMutation = useMutation(
+    (values: EditUserAttributes) =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `users/${id}`,
+        method: 'put',
+        data: values,
+      }),
+    {
+      onMutate(variables) {
+        const copyVariables = { ...variables };
+        if (copyVariables.user_password) {
+          if (copyVariables.user_password.length > 0) {
+            return copyVariables;
+          }
+          delete copyVariables.user_password;
+          return copyVariables;
+        }
+        return variables;
+      },
+
+      onSuccess: () => {
+        triggerAlert('User updated', 'success');
+        navigation(-1);
+      },
+      onError: (err: AxiosErrorData) => {
+        if (err?.response?.data) {
+          triggerAlert(err?.response?.statusText, 'error');
+        } else {
+          triggerAlert(err?.message, 'error');
+        }
+      },
     }
-  }, [response]);
+  );
+
+  if (userQuery.isLoading) return <LoadingState />;
 
   return (
     <Container>
-      {!isLoading &&
-        'data' in fetchedData &&
-        fetchedData.data &&
-        !isArray(fetchedData.data) && (
-          <Form data={fetchedData?.data} dataType="users" mode="edit" />
-        )}
-      {isLoading && (
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
-      )}
+      <FormGenerator<UserAttributes>
+        validationSchema={editUsersValidation}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false);
+          userMutation.mutate(values);
+        }}
+        fields={fields('users')}
+        fetchedValues={userQuery.data?.data}
+        extraData={{
+          dropdown: [
+            {
+              value: 'admin',
+              text: 'admin',
+            },
+            {
+              value: 'editor',
+              text: 'editor',
+            },
+            {
+              value: 'user',
+              text: 'user',
+            },
+          ],
+        }}
+      />
     </Container>
   );
 }

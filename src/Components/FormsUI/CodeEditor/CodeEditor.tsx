@@ -6,7 +6,7 @@ import 'ace-builds/src-noconflict/theme-chaos';
 import 'ace-builds/src-noconflict/ext-language_tools';
 
 import './CodeEditor.scss';
-import EditorParams from '../../Models/EditorHandler';
+import EditorParams from '../../../Models/EditorHandler';
 
 function Editor({ editorHandler, value }: EditorParams) {
   ace.config.set(

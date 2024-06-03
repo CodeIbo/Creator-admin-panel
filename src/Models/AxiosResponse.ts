@@ -7,6 +7,7 @@ import { PodcastAttributes } from './Api/podcast.model';
 import { UserAttributes } from './Api/users.model';
 import { MenuAttributes } from './Api/menu.model';
 import { UrlAttributes } from './Api/url.model';
+import { LoginResponse } from './Api/login.model';
 
 export type ApiCallback =
   | ArticlesAttributes
@@ -28,23 +29,26 @@ export type ApiUpdate =
   | Partial<MenuAttributes>
   | Partial<UrlAttributes>;
 
-export interface AccessToken {
-  accessToken?: string;
-}
-
-export interface AxiosResponseUnTypedData {
-  data?: ApiCallback[] | ApiCallback | AccessToken;
-  httpStatus: string;
-  message: string;
-  statusCode: number;
-  timeStamp: string;
-}
-export interface AxiosResponseTypedData<T = ApiCallback> {
-  data?: T[] | T;
+export interface AxiosResponseBase {
   httpStatus: string;
   message: string;
   statusCode: number;
   timeStamp: string;
 }
 
-export type AxiosErrorData = AxiosError<Omit<AxiosResponseUnTypedData, 'data'>>;
+export interface AxiosResponseTypedArray<T = ApiCallback>
+  extends AxiosResponseBase {
+  data: T[];
+}
+
+export interface AxiosResponseTypedObject<T = ApiCallback>
+  extends AxiosResponseBase {
+  data: T;
+}
+
+export interface AxiosResponseLoginHandler<T = LoginResponse | string>
+  extends AxiosResponseBase {
+  data: T;
+}
+
+export type AxiosErrorData = AxiosError<AxiosResponseBase>;

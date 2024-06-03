@@ -1,7 +1,5 @@
-import { Dispatch, SetStateAction } from 'react';
-
 type EditorParams = {
-  editorHandler: Dispatch<SetStateAction<string>>;
+  editorHandler: (value: string, event?: any) => void;
   value: string;
 };
 

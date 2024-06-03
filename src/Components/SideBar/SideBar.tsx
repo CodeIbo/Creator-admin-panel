@@ -15,7 +15,7 @@ import ListItemCustom from './ListItem/ListItem';
 
 function SideBar({ sideBarState, sideBarHandler }: SideBarHandlerType) {
   return (
-    <div>
+    <Box>
       <Drawer
         open={sideBarState}
         onClose={() => {
@@ -77,7 +77,7 @@ function SideBar({ sideBarState, sideBarHandler }: SideBarHandlerType) {
           </List>
         </Box>
       </Drawer>
-    </div>
+    </Box>
   );
 }
 

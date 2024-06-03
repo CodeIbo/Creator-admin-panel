@@ -10,14 +10,15 @@ import LinkItemType from '../../../Models/linkItemType';
 function ListItemCustom({ IconElement, name, urlAdress }: LinkItemType) {
   return (
     <ListItem>
-      <Link to={urlAdress} style={{ all: 'inherit' }}>
-        <ListItemButton>
-          <ListItemIcon>
-            <IconElement />
-          </ListItemIcon>
-          <ListItemText primary={name} />
-        </ListItemButton>
-      </Link>
+      <ListItemButton component={Link} to={urlAdress}>
+        <ListItemIcon>
+          <IconElement color="primary" />
+        </ListItemIcon>
+        <ListItemText
+          primary={name}
+          primaryTypographyProps={{ color: 'primary' }}
+        />
+      </ListItemButton>
     </ListItem>
   );
 }

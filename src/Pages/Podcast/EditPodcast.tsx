@@ -1,46 +1,84 @@
-import { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import { useParams } from 'react-router-dom';
-import { isArray } from 'lodash';
-import Form from '../../Components/Form/Form';
-import useFetch from '../../Services/Hooks/useFetch';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { useMutation, useQuery } from 'react-query';
+import {
+  AxiosErrorData,
+  AxiosResponseTypedObject,
+} from '../../Models/AxiosResponse';
 import { PodcastAttributes } from '../../Models/Api/podcast.model';
+import FormGenerator from '../../Components/FormsUI/FormGenerator';
+
+import podcastValidation from '../../Api/Validation/podcast.validation';
+import fields from '../../Services/Helpers/fieldsTypeSave';
+import fetchAxios from '../../Services/Api/fetchAxios';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
+import LoadingState from '../../Components/LoadingState/LoadingState';
+
+type EditPodcastAttributes = Partial<
+  Omit<PodcastAttributes, 'id' | 'page_category'>
+>;
 
 function EditPodcast() {
   const { id } = useParams();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<PodcastAttributes> | object
-  >({});
-  const { response, isLoading, error, apiHandler } = useFetch();
-  useEffect(() => {
-    apiHandler({
-      method: 'get',
-      url: `podcast/${id}`,
-    });
-  }, []);
+  const { triggerAlert } = useAlert();
+  const axiosPrivate = useAxiosPrivate();
+  const navigation = useNavigate();
 
-  useEffect(() => {
-    if (response) {
-      setFetchedData(response);
+  const podcastQuery = useQuery<
+    AxiosResponseTypedObject<PodcastAttributes>,
+    AxiosErrorData
+  >({
+    queryKey: ['podcast', id],
+    queryFn: () =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `podcast/${id}`,
+        method: 'get',
+      }),
+    enabled: typeof id === 'string',
+    onError(err) {
+      triggerAlert(err.message, 'error');
+    },
+  });
+  const podcastMutation = useMutation(
+    (values: EditPodcastAttributes) =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `podcast/${id}`,
+        method: 'put',
+        data: values,
+      }),
+    {
+      onSuccess: () => {
+        triggerAlert('Podcast updated', 'success');
+        navigation(-1);
+      },
+      onError: (err: AxiosErrorData) => {
+        if (err?.response?.data) {
+          triggerAlert(err?.response?.statusText, 'error');
+        } else {
+          triggerAlert(err?.message, 'error');
+        }
+      },
     }
-  }, [response, fetchedData]);
+  );
+
+  if (podcastQuery.isLoading) return <LoadingState />;
 
   return (
     <Container>
-      {!isLoading &&
-        'data' in fetchedData &&
-        fetchedData.data &&
-        !isArray(fetchedData.data) && (
-          <Form data={fetchedData?.data} dataType="podcast" mode="edit" />
-        )}
-      {isLoading && (
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
-      )}
+      <FormGenerator<PodcastAttributes>
+        validationSchema={podcastValidation}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false);
+          podcastMutation.mutate(values);
+        }}
+        fields={fields('podcast')}
+        fetchedValues={podcastQuery.data?.data}
+      />
     </Container>
   );
 }

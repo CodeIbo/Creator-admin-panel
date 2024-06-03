@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import { ImageAttributes } from '../../Models/Api/image.model';
 import LinkButton from '../LinkButton/LinkButton';
-import useFetch from '../../Services/Hooks/useFetch';
 
 export default function GalleryItem({
   image,
@@ -16,14 +15,8 @@ export default function GalleryItem({
   image: ImageAttributes;
   onDelete: (id: string) => void;
 }) {
-  const { apiHandler } = useFetch();
   const deletImage = () => {
-    apiHandler({
-      method: 'delete',
-      url: `image/${image.id}`,
-    }).then(() => {
-      onDelete(image.id);
-    });
+    onDelete(image.id);
   };
   return (
     <Card>

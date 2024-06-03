@@ -1,56 +1,81 @@
-import { useEffect, useState } from 'react';
-import { Typography, Container, Box, CircularProgress } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { isArray } from 'lodash';
+import { Container } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import Form from '../../Components/Form/Form';
-import useFetch from '../../Services/Hooks/useFetch';
+import { useMutation, useQuery } from 'react-query';
 import { EpisodeAttributes } from '../../Models/Api/episode.model';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+import {
+  AxiosErrorData,
+  AxiosResponseTypedObject,
+} from '../../Models/AxiosResponse';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
+import fetchAxios from '../../Services/Api/fetchAxios';
+import LoadingState from '../../Components/LoadingState/LoadingState';
+import FormGenerator from '../../Components/FormsUI/FormGenerator';
+import fields from '../../Services/Helpers/fieldsTypeSave';
+import episodeValidation from '../../Api/Validation/episode.validation';
+
+type EditEpisodeAtributes = Partial<Omit<EpisodeAttributes, 'id'>>;
 
 function EditEpisodePost() {
   const { id } = useParams();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<EpisodeAttributes> | object
-  >({});
-  const { response, isLoading, apiHandler, error } = useFetch();
-  useEffect(() => {
-    apiHandler({
-      method: 'get',
-      url: `episode/${id}`,
-    });
-  }, []);
+  const axiosPrivate = useAxiosPrivate();
+  const { triggerAlert } = useAlert();
+  const navigation = useNavigate();
 
-  useEffect(() => {
-    if (response) {
-      setFetchedData(response);
+  const episodeQuery = useQuery<
+    AxiosResponseTypedObject<EpisodeAttributes>,
+    AxiosErrorData
+  >({
+    queryKey: ['episode', id],
+    queryFn: () =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `episode/${id}`,
+        method: 'get',
+      }),
+    enabled: typeof id === 'string',
+    onError(err) {
+      triggerAlert(err.message, 'error');
+    },
+  });
+
+  const episodeMutation = useMutation(
+    (values: EditEpisodeAtributes) =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `episode/${id}`,
+        method: 'put',
+        data: values,
+      }),
+    {
+      onSuccess: () => {
+        triggerAlert('Episode updated', 'success');
+        navigation(-1);
+      },
+      onError: (err: AxiosErrorData) => {
+        if (err?.response?.data) {
+          triggerAlert(err?.response?.statusText, 'error');
+        } else {
+          triggerAlert(err?.message, 'error');
+        }
+      },
     }
-  }, [response]);
+  );
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (error) {
-    return <Typography component="h3">{error.message}</Typography>;
-  }
+  if (episodeQuery.isLoading) return <LoadingState />;
 
   return (
     <Container>
-      {!isLoading &&
-        'data' in fetchedData &&
-        fetchedData.data &&
-        !isArray(fetchedData.data) && (
-          <Form data={fetchedData?.data} dataType="episode" mode="edit" />
-        )}
-      {isLoading && (
-        <Box sx={{ display: 'flex' }}>
-          <CircularProgress />
-        </Box>
-      )}
+      <FormGenerator<EpisodeAttributes>
+        validationSchema={episodeValidation}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false);
+          episodeMutation.mutate(values);
+        }}
+        fields={fields('episode')}
+        fetchedValues={episodeQuery.data?.data}
+      />
     </Container>
   );
 }

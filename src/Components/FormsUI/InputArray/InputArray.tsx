@@ -4,9 +4,14 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InputArrayType from '../../Models/InputArrayType';
+import { v4 as uuidv4 } from 'uuid';
+import { Chip, Paper, styled } from '@mui/material';
+import InputArrayType from '../../../Models/InputArrayType';
 
-function InputArray({ key, arrayDataSet, arrayData }: InputArrayType) {
+function InputArray({ key, arrayProps, arrayData }: InputArrayType) {
+  const ListItem = styled('li')(({ theme }) => ({
+    margin: theme.spacing(0.5),
+  }));
   const [inputValue, setInputValue] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const onEnterPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -16,8 +21,7 @@ function InputArray({ key, arrayDataSet, arrayData }: InputArrayType) {
       const duplicate: boolean = arrayData.includes(lowerText);
       setIsError(duplicate);
       if (!duplicate && lowerText.length > 0) {
-        arrayData.push(lowerText);
-        arrayDataSet(arrayData);
+        arrayProps.push(lowerText);
       }
       setInputValue('');
     }
@@ -27,11 +31,20 @@ function InputArray({ key, arrayDataSet, arrayData }: InputArrayType) {
     tag: string
   ) => {
     e.preventDefault();
-    const newData = arrayData.filter((arrTag) => arrTag !== tag);
-    arrayDataSet(newData);
+    arrayProps.remove(arrayData.indexOf(tag));
   };
   return (
-    <Box sx={{ width: '100%' }}>
+    <Paper
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        listStyle: 'none',
+        px: 0.5,
+        py: 1,
+        m: 0,
+      }}
+      component="ul"
+    >
       <TextField
         sx={{ width: '100%' }}
         key={key}
@@ -46,28 +59,35 @@ function InputArray({ key, arrayDataSet, arrayData }: InputArrayType) {
           setInputValue(e.target.value);
         }}
         error={isError}
-        helperText={isError && 'Duplikat tagu'}
+        helperText={isError && 'Tag duplicate'}
       />
-      <Box sx={{ paddingTop: '0.5rem' }}>
-        {arrayData.length > 0 ? (
-          arrayData.map((tag) => (
-            <Button
-              sx={{ m: 1 }}
-              key={tag}
-              onClick={(e) => {
+
+      {arrayData.length > 0 ? (
+        arrayData.map((tag) => (
+          <ListItem key={uuidv4()}>
+            <Chip
+              label={tag}
+              sx={{ fontSize: '1.1rem', mt: 1 }}
+              onDelete={(e) => {
                 removeItem(e, tag);
               }}
               variant="outlined"
-              startIcon={<DeleteIcon />}
-            >
-              {tag}
-            </Button>
-          ))
-        ) : (
-          <Typography>Dodaj nowe tagi :)</Typography>
-        )}
-      </Box>
-    </Box>
+              color="success"
+            />
+          </ListItem>
+        ))
+      ) : (
+        <Typography
+          paddingTop={1}
+          display="block"
+          minWidth="100%"
+          textAlign="center"
+          color="textSecondary"
+        >
+          Dodaj nowe tagi :)
+        </Typography>
+      )}
+    </Paper>
   );
 }
 

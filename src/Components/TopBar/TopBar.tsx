@@ -5,22 +5,41 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useCookies } from 'react-cookie';
 
+import { useMutation } from 'react-query';
+import { useEffect } from 'react';
 import useAuth from '../../Services/Hooks/useAuth';
 import TopBarHandlerType from '../../Models/TopBarHandlerType';
 import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import fetchAxios from '../../Services/Api/fetchAxios';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
 
 function TopBar({ SideBarHandler }: TopBarHandlerType) {
   const { setAuth } = useAuth();
   const { triggerAlert } = useAlert();
-  const [cookies, setCookie, removeCookie] = useCookies(['user']);
+  const axiosPrivate = useAxiosPrivate();
 
+  const logout = useMutation(() =>
+    fetchAxios({
+      axios: axiosPrivate,
+      method: 'post',
+      url: 'auth/logout',
+      data: {},
+      config: {
+        headers: { Authorization: null },
+      },
+    })
+  );
   const Logout = () => {
-    triggerAlert('Logout', 'success');
-    setAuth({});
-    removeCookie('user');
+    logout.mutate();
+    localStorage.removeItem('user');
   };
+  useEffect(() => {
+    if (logout.isSuccess) {
+      triggerAlert('Logout', 'success');
+      setAuth({});
+    }
+  }, [logout.isSuccess]);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ mb: 5 }}>

@@ -1,0 +1,289 @@
+{
+  "article": [
+    {
+      "type": "input",
+      "label": "Article Title",
+      "name": "article_title"
+    },
+    {
+      "type": "input",
+      "label": "Lead",
+      "name": "lead"
+    },
+    {
+      "type": "input",
+      "label": "Article Url",
+      "name": "url"
+    },
+    {
+      "type": "input",
+      "label": "Photo Url",
+      "name": "photo_url"
+    },
+    {
+      "type": "input",
+      "label": "Author",
+      "name": "author"
+    },
+    {
+      "type": "date",
+      "label": "Date",
+      "name": "date"
+    },
+    {
+      "type": "html",
+      "label": "Content",
+      "name": "article_content"
+    },
+    {
+      "type": "array",
+      "label": "Tags",
+      "name": "post_tags"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Title",
+      "name": "meta_data_title"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Description",
+      "name": "meta_data_description"
+    },
+    {
+      "type": "input",
+      "label": "Keywords",
+      "name": "keywords"
+    }
+  ],
+  "blog": [
+    {
+      "type": "input",
+      "label": "Name",
+      "name": "name"
+    },
+    {
+      "type": "input",
+      "label": "Blog Title",
+      "name": "blog_title"
+    },
+    {
+      "type": "input",
+      "label": "Blog Url",
+      "name": "url"
+    },
+    {
+      "type": "input",
+      "label": "Blog Key",
+      "name": "blog_key"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Title",
+      "name": "meta_data_title"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Description",
+      "name": "meta_data_description"
+    },
+    {
+      "type": "input",
+      "label": "Keywords",
+      "name": "keywords"
+    }
+  ],
+  "custom_page": [
+    {
+      "type": "input",
+      "label": "Name",
+      "name": "name"
+    },
+    {
+      "type": "html",
+      "label": "Page Content",
+      "name": "page_content"
+    },
+    {
+      "type": "input",
+      "label": "Page Url",
+      "name": "url"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Title",
+      "name": "meta_data_title"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Description",
+      "name": "meta_data_description"
+    },
+    {
+      "type": "input",
+      "label": "Keywords",
+      "name": "keywords"
+    }
+  ],
+  "episode": [
+    {
+      "type": "input",
+      "label": "Episode Title",
+      "name": "episode_title"
+    },
+    {
+      "type": "html",
+      "label": "Episode Content",
+      "name": "episode_content"
+    },
+    {
+      "type": "input",
+      "label": "Announement url",
+      "name": "announcement_url"
+    },
+    {
+      "type": "input",
+      "label": "Photo Url",
+      "name": "photo_url"
+    },
+    {
+      "type": "input",
+      "label": "Url",
+      "name": "url"
+    },
+    {
+      "type": "date",
+      "label": "Publication date",
+      "name": "date"
+    },
+    {
+      "type": "input",
+      "label": "Author",
+      "name": "author"
+    },
+    {
+      "type": "array",
+      "label": "Episode Tags",
+      "name": "episode_tags"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Title",
+      "name": "meta_data_title"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Description",
+      "name": "meta_data_description"
+    },
+    {
+      "type": "input",
+      "label": "Keywords",
+      "name": "keywords"
+    }
+  ],
+  "menu": [
+    {
+      "type": "input",
+      "label": "Url Name",
+      "name": "label"
+    },
+    {
+      "type": "dropdown",
+      "label": "Choose Url",
+      "name": "url_id",
+      "strictType": "url"
+    },
+    {
+      "type": "input",
+      "label": "Scroll target (id)",
+      "name": "scroll_target"
+    }
+  ],
+  "podcast": [
+    {
+      "type": "input",
+      "label": "Name",
+      "name": "name"
+    },
+    {
+      "type": "input",
+      "label": "Podcast Title",
+      "name": "podcast_title"
+    },
+    {
+      "type": "input",
+      "label": "Podcast Url",
+      "name": "url"
+    },
+    {
+      "type": "input",
+      "label": "Podcast Key",
+      "name": "podcast_key"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Title",
+      "name": "meta_data_title"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Description",
+      "name": "meta_data_description"
+    },
+    {
+      "type": "input",
+      "label": "Keywords",
+      "name": "keywords"
+    }
+  ],
+  "users": [
+    {
+      "type": "input",
+      "label": "Email",
+      "name": "email"
+    },
+    {
+      "type": "input",
+      "label": "Nick Name",
+      "name": "nick_name"
+    },
+    {
+      "type": "input",
+      "label": "Pasword",
+      "name": "user_password",
+      "strictType": "password"
+    },
+    {
+      "type": "dropdown",
+      "label": "Access Lvl",
+      "name": "access_lvl"
+    }
+  ],
+  "login": [
+    {
+      "type": "input",
+      "label": "Login",
+      "name": "email",
+      "strictType": "email"
+    },
+    {
+      "type": "input",
+      "label": "Pasword",
+      "name": "user_password",
+      "strictType": "password"
+    }
+  ],
+  "social_media": [
+    {
+      "type": "input",
+      "label": "Link",
+      "name": "link"
+    },
+    {
+      "type": "input",
+      "label": "Title",
+      "name": "title"
+    }
+  ]
+}

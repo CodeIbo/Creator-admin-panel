@@ -1,50 +1,80 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { isArray } from 'lodash';
-import { Typography, CircularProgress, Box, Container } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Container } from '@mui/material';
+import { useMutation, useQuery } from 'react-query';
 
-import Form from '../../Components/Form/Form';
-import useFetch from '../../Services/Hooks/useFetch';
 import { ArticlesAttributes } from '../../Models/Api/article.model';
-import { AxiosResponseTypedData } from '../../Models/AxiosResponse';
+import {
+  AxiosErrorData,
+  AxiosResponseTypedObject,
+} from '../../Models/AxiosResponse';
+import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
+import { useAlert } from '../../Services/Context/Alert/AlertProvider';
+import LoadingState from '../../Components/LoadingState/LoadingState';
+import articleValidation from '../../Api/Validation/article.validation';
+import FormGenerator from '../../Components/FormsUI/FormGenerator';
+import fields from '../../Services/Helpers/fieldsTypeSave';
+import fetchAxios from '../../Services/Api/fetchAxios';
+
+type EditArticleAtributes = Omit<ArticlesAttributes, 'id' | 'blog_key'>;
 
 function EditArticlePost() {
   const { id } = useParams();
-  const [fetchedData, setFetchedData] = useState<
-    AxiosResponseTypedData<ArticlesAttributes> | object
-  >({});
-  const { response, isLoading, error, apiHandler } = useFetch();
-  useEffect(() => {
-    apiHandler({
-      method: 'get',
-      url: `article/${id}`,
-    });
-  }, []);
+  const axiosPrivate = useAxiosPrivate();
+  const { triggerAlert } = useAlert();
+  const navigation = useNavigate();
 
-  useEffect(() => {
-    if (response) {
-      setFetchedData(response);
+  const articleQuery = useQuery<
+    AxiosResponseTypedObject<EditArticleAtributes>,
+    AxiosErrorData
+  >({
+    queryKey: ['article', id],
+    queryFn: () =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `article/${id}`,
+        method: 'get',
+      }),
+    enabled: typeof id === 'string',
+    onError(err) {
+      triggerAlert(err.message, 'error');
+    },
+  });
+
+  const articleMutation = useMutation(
+    (values: EditArticleAtributes) =>
+      fetchAxios({
+        axios: axiosPrivate,
+        url: `article/${id}`,
+        method: 'put',
+        data: values,
+      }),
+    {
+      onSuccess: () => {
+        triggerAlert('Article updated', 'success');
+        navigation('..');
+      },
+      onError: (err: AxiosErrorData) => {
+        if (err?.response?.data) {
+          triggerAlert(err?.response?.statusText, 'error');
+        } else {
+          triggerAlert(err?.message, 'error');
+        }
+      },
     }
-  }, [response]);
+  );
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (error) {
-    return <Typography component="h3">{error.message}</Typography>;
-  }
-
+  if (articleQuery.isLoading) return <LoadingState />;
   return (
     <Container>
-      {'data' in fetchedData &&
-        fetchedData.data &&
-        !isArray(fetchedData.data) && (
-          <Form data={fetchedData.data} dataType="article" mode="edit" />
-        )}
+      <FormGenerator<EditArticleAtributes>
+        validationSchema={articleValidation}
+        onSubmit={(values, { setSubmitting }) => {
+          setSubmitting(false);
+          articleMutation.mutate(values);
+        }}
+        fields={fields('article')}
+        fetchedValues={articleQuery.data?.data}
+      />
     </Container>
   );
 }

@@ -35,6 +35,9 @@ module.exports = {
     'array-callback-return': 0,
     'import/no-cycle': 0,
     'react/jsx-props-no-spreading': 0,
+    'no-useless-escape': 0,
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
     'prettier/prettier': [
       'error',
       {

@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction } from 'react';
+import { FieldArrayRenderProps } from 'formik';
 
 type InputArrayType = {
   key: string;
   arrayData: string[];
-  arrayDataSet: Dispatch<SetStateAction<string[]>>;
+  arrayProps: FieldArrayRenderProps;
 };
 
 export default InputArrayType;

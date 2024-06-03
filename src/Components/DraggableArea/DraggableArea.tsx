@@ -21,6 +21,7 @@ import {
   Typography,
 } from '@mui/material';
 import { blue } from '@mui/material/colors';
+import _ from 'lodash';
 
 import LinkButton from '../LinkButton/LinkButton';
 import { AxiosErrorData } from '../../Models/AxiosResponse';
@@ -44,7 +45,6 @@ function DraggableArea({
   configButtons: {
     edit?: boolean;
     delete?: boolean;
-    switch?: boolean;
   };
   isLoading: boolean;
   error: AxiosErrorData | null;
@@ -154,8 +154,12 @@ function DraggableArea({
                     >
                       <ListItemText
                         primary={
-                          <Typography variant="subtitle1">
-                            {item[objectNames.label]}
+                          <Typography
+                            variant="subtitle1"
+                            color="primary"
+                            fontWeight="500"
+                          >
+                            {_.startCase(item[objectNames.label])}
                           </Typography>
                         }
                       />

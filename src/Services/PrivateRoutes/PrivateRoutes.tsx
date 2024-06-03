@@ -4,7 +4,7 @@ import useAuth from '../Hooks/useAuth';
 function PrivateRoute() {
   const { auth } = useAuth();
   const location = useLocation();
-  return auth?.email ? (
+  return auth?.accessToken ? (
     <Outlet />
   ) : (
     <Navigate to="/login" state={{ from: location }} replace />

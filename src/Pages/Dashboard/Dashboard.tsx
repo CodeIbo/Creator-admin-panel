@@ -30,6 +30,8 @@ import NewMenu from '../Menu/NewMenu';
 import EditMenu from '../Menu/EditMenu';
 import SocialMedia from '../SocialMedia/SocialMedia';
 import EditSocialMedia from '../SocialMedia/EditSocialMedia';
+import Settings from '../Settings/Settings';
+import EditSettings from '../Settings/EditSettings';
 
 function Dashboard() {
   const [siteBarVisibility, setSideBarVisibility] = useState(false);
@@ -90,6 +92,11 @@ function Dashboard() {
           <Route path="/social-media">
             <Route path="" element={<SocialMedia />} />
             <Route path="edit/:id" element={<EditSocialMedia />} />
+          </Route>
+
+          <Route path="/settings">
+            <Route path="" element={<Settings />} />
+            <Route path="edit/:id" element={<EditSettings />} />
           </Route>
 
           <Route path="/gallery" element={<Gallery />} />

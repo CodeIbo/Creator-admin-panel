@@ -285,5 +285,47 @@
       "label": "Title",
       "name": "title"
     }
+  ],
+  "settings": [
+    {
+      "type": "input",
+      "label": "Company Name",
+      "name": "company_name"
+    },
+    {
+      "type": "input",
+      "label": "Logo (link - add to gallery first)",
+      "name": "logo"
+    },
+    {
+      "type": "input",
+      "label": "Logo Alt Image",
+      "name": "logo_alt"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Title (global)",
+      "name": "meta_data_title_global"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Desription (global)",
+      "name": "meta_data_description_global"
+    },
+    {
+      "type": "input",
+      "label": "Keywords",
+      "name": "keywords_global"
+    },
+    {
+      "type": "input",
+      "label": "Title",
+      "name": "title"
+    },
+    {
+      "type": "input",
+      "label": "Meta Data Suffix (global)",
+      "name": "meta_data_suffix_global"
+    }
   ]
 }

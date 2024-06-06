@@ -9,6 +9,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import ImageIcon from '@mui/icons-material/Image';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import TagIcon from '@mui/icons-material/Tag';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 import SideBarHandlerType from '../../Models/SideBarHandlerType';
 import ListItemCustom from './ListItem/ListItem';
@@ -73,6 +74,12 @@ function SideBar({ sideBarState, sideBarHandler }: SideBarHandlerType) {
               IconElement={AccountCircleIcon}
               name="Users"
               urlAdress="users"
+            />
+
+            <ListItemCustom
+              IconElement={SettingsIcon}
+              name="Settings"
+              urlAdress="settings"
             />
           </List>
         </Box>

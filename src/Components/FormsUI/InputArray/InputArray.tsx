@@ -1,9 +1,6 @@
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { v4 as uuidv4 } from 'uuid';
 import { Chip, Paper, styled } from '@mui/material';
 import InputArrayType from '../../../Models/InputArrayType';

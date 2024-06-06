@@ -67,6 +67,7 @@ function NewMenu() {
         }}
         fields={fields('menu')}
         extraData={{ dropdown: urlQuery.data?.data }}
+        buttons={{ first_button: { navigateTO: '..' } }}
       />
     </Container>
   );

@@ -49,7 +49,9 @@ function Episode() {
     {
       onSuccess: () => {
         triggerAlert('Item Deleted', 'success');
-        queryClient.invalidateQueries(['episode'], { exact: true });
+        queryClient.invalidateQueries(['episode', componentKey], {
+          exact: true,
+        });
       },
       onError: (err: AxiosErrorData) => {
         if (err?.response?.data) {

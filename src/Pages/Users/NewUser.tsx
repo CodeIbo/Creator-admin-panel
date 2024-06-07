@@ -54,6 +54,22 @@ function NewUser() {
         }}
         fields={fields('users')}
         buttons={{ first_button: { navigateTO: '..' } }}
+        extraData={{
+          dropdown: [
+            {
+              value: 'admin',
+              text: 'admin',
+            },
+            {
+              value: 'editor',
+              text: 'editor',
+            },
+            {
+              value: 'user',
+              text: 'user',
+            },
+          ],
+        }}
       />
     </Container>
   );

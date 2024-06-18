@@ -1,8 +1,6 @@
-import Container from '@mui/material/Container';
-
-import { useNavigate, useParams } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from 'react-query';
+
 import {
   AxiosErrorData,
   AxiosResponseTypedObject,
@@ -22,10 +20,10 @@ type EditSettingsAtributes = Partial<
 >;
 
 function EditSettings() {
-  const { id } = useParams();
   const { triggerAlert } = useAlert();
   const axiosPrivate = useAxiosPrivate();
   const navigation = useNavigate();
+  const id = process.env.REACT_APP_SETTING_ID;
 
   const settingsQuery = useQuery<
     AxiosResponseTypedObject<SettingsAttributes>,
@@ -69,17 +67,19 @@ function EditSettings() {
   if (settingsQuery.isLoading) return <LoadingState />;
 
   return (
-    <Container>
-      <FormGenerator<SettingsAttributes>
-        validationSchema={settingsValidation}
-        onSubmit={(values, { setSubmitting }) => {
-          setSubmitting(false);
-          settingMutation.mutate(values);
-        }}
-        fields={fields('settings')}
-        fetchedValues={settingsQuery.data?.data}
-      />
-    </Container>
+    <FormGenerator<SettingsAttributes>
+      validationSchema={settingsValidation}
+      onSubmit={(values, { setSubmitting }) => {
+        setSubmitting(false);
+        settingMutation.mutate(values);
+      }}
+      fields={fields('settings')}
+      fetchedValues={settingsQuery.data?.data}
+      buttons={{
+        first_button: { show: false },
+        second_button: { name: 'Update' },
+      }}
+    />
   );
 }
 export default EditSettings;

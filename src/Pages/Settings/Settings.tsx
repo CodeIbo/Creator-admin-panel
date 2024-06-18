@@ -1,66 +1,30 @@
-import { Box, Container, Typography } from '@mui/material';
-import { useQuery } from 'react-query';
-import {
-  AxiosErrorData,
-  AxiosResponseTypedArray,
-} from '../../Models/AxiosResponse';
-import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
-import fetchAxios from '../../Services/Api/fetchAxios';
-import LoadingState from '../../Components/LoadingState/LoadingState';
-import LinkButton from '../../Components/LinkButton/LinkButton';
-import TableGenerator, {
-  Column,
-} from '../../Components/TableUI/TableGenerator';
-import { SettingsAttributes } from '../../Models/Api/settings.model';
+import { Container, Tab, Tabs } from '@mui/material';
+import { SyntheticEvent, useState } from 'react';
+import EditSettings from './EditSettings';
+import UISettings from './UISettings';
 
 function Settings() {
-  const axiosPrivate = useAxiosPrivate();
-  const settingsQuery = useQuery<
-    AxiosResponseTypedArray<SettingsAttributes>,
-    AxiosErrorData
-  >({
-    queryKey: ['settings'],
-    queryFn: async () =>
-      fetchAxios({ axios: axiosPrivate, method: 'get', url: 'settings' }),
-  });
-
-  const buttons = (row: SettingsAttributes) => {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '1rem',
-        }}
-      >
-        <LinkButton
-          to={`edit/${row.id}`}
-          buttonText="Edit"
-          variant="contained"
-        />
-      </Box>
-    );
+  const lastTab = localStorage.getItem('last_tab');
+  const [tabIndex, setTabIndex] = useState(lastTab ? Number(lastTab) : 0);
+  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
+    setTabIndex(newValue);
+    localStorage.setItem('last_tab', newValue.toString());
   };
-
-  const columns: Column<SettingsAttributes>[] = [
-    { header: 'Company ID', accessor: 'id' },
-    { header: 'Company Name', accessor: 'company_name' },
-    { header: 'Actions', accessor: 'action', render: buttons },
-  ];
-
-  if (settingsQuery.isLoading) return <LoadingState />;
-  if (settingsQuery.isError)
-    return (
-      <Typography component="h3">{settingsQuery.error.message}</Typography>
-    );
-
   return (
     <Container>
-      <TableGenerator<SettingsAttributes>
-        data={settingsQuery.data?.data || []}
-        includeKeys={['id', 'company_name']}
-        columns={columns}
-      />
+      <Tabs
+        value={tabIndex}
+        onChange={handleTabChange}
+        variant="fullWidth"
+        indicatorColor="primary"
+        textColor="inherit"
+        sx={{ mb: 5, background: '#131312', borderRadius: 1 }}
+      >
+        <Tab label="Global" value={0} />
+        <Tab label="UI" value={1} />
+      </Tabs>
+      {tabIndex === 0 && <EditSettings />}
+      {tabIndex === 1 && <UISettings />}
     </Container>
   );
 }

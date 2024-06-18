@@ -314,18 +314,25 @@
     },
     {
       "type": "input",
-      "label": "Keywords",
+      "label": "Keywords (global)",
       "name": "keywords_global"
-    },
-    {
-      "type": "input",
-      "label": "Title",
-      "name": "title"
     },
     {
       "type": "input",
       "label": "Meta Data Suffix (global)",
       "name": "meta_data_suffix_global"
+    }
+  ],
+  "ui-settings": [
+    {
+      "type": "input",
+      "label": "Value for UI Front",
+      "name": "element_value"
+    },
+    {
+      "type": "input",
+      "label": "Style element with classess (advanced)",
+      "name": "element_css"
     }
   ]
 }

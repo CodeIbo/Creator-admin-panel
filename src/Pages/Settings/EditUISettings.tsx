@@ -32,7 +32,7 @@ function EditUISettings() {
     queryFn: () =>
       fetchAxios({
         axios: axiosPrivate,
-        url: `ui-settings/panel/${id}`,
+        url: `settings/ui/panel/${id}`,
         method: 'get',
       }),
     enabled: typeof id === 'string',

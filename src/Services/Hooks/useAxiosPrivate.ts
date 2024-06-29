@@ -2,11 +2,14 @@ import { useEffect } from 'react';
 import _ from 'lodash';
 import { axiosPrivate } from '../Api/Axios';
 import useRefreshToken from './userRefreshToken';
+import useAxiosAPIInterceptor from '../Interceptors/useAxiosAPI.interceptor';
 import useAuth from './useAuth';
 
 const useAxiosPrivate = () => {
   const { auth } = useAuth();
   const refresh = useRefreshToken();
+
+  useAxiosAPIInterceptor(axiosPrivate);
 
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(

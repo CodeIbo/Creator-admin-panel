@@ -56,8 +56,12 @@ export function AuthProvider({ children }: ChildProp) {
         setAuth((prev) => {
           return { ...prev, accessToken: newAccessToken };
         });
+        if (location.pathname !== '/login') {
+          navigation(location, { replace: true });
+        } else {
+          navigation('/dashboard', { replace: true });
+        }
         triggerAlert('Welcome Back', 'success');
-        navigation(location, { replace: true });
       }
     };
     const today = moment().startOf('day').toISOString();

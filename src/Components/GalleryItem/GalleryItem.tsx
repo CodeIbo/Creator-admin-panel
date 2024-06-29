@@ -22,10 +22,10 @@ export default function GalleryItem({
     <Card>
       <CardMedia
         component="img"
-        alt={`${process.env.REACT_APP_BASE_API_URL}/image/${image.original_name}`}
+        alt={`${process.env.REACT_APP_BASE_API_URL}/api/image/${image.original_name}`}
         height="140"
         width="140"
-        image={`${process.env.REACT_APP_BASE_API_URL}/image/${image.id}`}
+        image={`${process.env.REACT_APP_BASE_API_URL}/api/image/${image.id}`}
       />
       <CardContent>
         <Typography gutterBottom variant="body2" component="div">

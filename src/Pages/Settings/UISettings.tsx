@@ -24,7 +24,7 @@ function UISettings() {
       fetchAxios({
         axios: axiosPrivate,
         method: 'get',
-        url: 'ui-settings/panel',
+        url: 'settings/ui/panel',
       }),
   });
 

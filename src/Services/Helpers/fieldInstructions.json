@@ -321,6 +321,11 @@
       "type": "input",
       "label": "Meta Data Suffix (global)",
       "name": "meta_data_suffix_global"
+    },
+    {
+      "type": "input",
+      "label": "Author (global)",
+      "name": "meta_author_global"
     }
   ],
   "ui-settings": [

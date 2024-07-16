@@ -17,6 +17,7 @@ const settingsValidation = Yup.object().shape({
   meta_data_suffix_global: Yup.string().required(
     'Meta Global suffix is required field'
   ),
+  meta_author_global: Yup.string().required('Author is required field'),
 });
 
 export default settingsValidation;

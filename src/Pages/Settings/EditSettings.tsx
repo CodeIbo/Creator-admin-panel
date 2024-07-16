@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from 'react-query';
 
+import { useState } from 'react';
 import {
   AxiosErrorData,
   AxiosResponseTypedObject,
@@ -23,20 +24,22 @@ function EditSettings() {
   const { triggerAlert } = useAlert();
   const axiosPrivate = useAxiosPrivate();
   const navigation = useNavigate();
-  const id = process.env.REACT_APP_SETTING_ID;
+  const [id, setId] = useState<string | null>(null);
 
   const settingsQuery = useQuery<
     AxiosResponseTypedObject<SettingsAttributes>,
     AxiosErrorData
   >({
-    queryKey: ['settings', id],
+    queryKey: ['settings', 'default'],
     queryFn: () =>
       fetchAxios({
         axios: axiosPrivate,
-        url: `settings/${id}`,
+        url: `settings/default`,
         method: 'get',
       }),
-    enabled: typeof id === 'string',
+    onSuccess(data) {
+      setId(data.data.id);
+    },
     onError(err) {
       triggerAlert(err.message, 'error');
     },

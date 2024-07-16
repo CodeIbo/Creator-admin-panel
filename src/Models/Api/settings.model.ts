@@ -9,4 +9,5 @@ export interface SettingsAttributes extends TimeStamp {
   meta_data_description_global: string;
   keywords_global: string;
   meta_data_suffix_global: string;
+  meta_author_global: string;
 }

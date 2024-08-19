@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import { Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { useEffect } from 'react';
 import useAuth from '../../Services/Hooks/useAuth';
@@ -56,9 +57,17 @@ function TopBar({ SideBarHandler }: TopBarHandlerType) {
           >
             <MenuIcon />
           </IconButton>
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Admin Panel
+            <Link
+              to="/dashboard"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+              title="Go to Home Page"
+            >
+              Admin Panel
+            </Link>
           </Typography>
+
           <Button color="inherit" onClick={Logout}>
             Logout
           </Button>

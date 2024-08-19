@@ -82,12 +82,23 @@ function Pages() {
       </Box>
     );
   };
+  const links = (row: CustomPageAttributes) => {
+    return (
+      <a
+        href={`${process.env.REACT_APP_FRONT_URL}/${row.url}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {row.url}
+      </a>
+    );
+  };
 
   const columns: Column<CustomPageAttributes>[] = [
     { header: 'Page Name', accessor: 'name' },
-    { header: 'Page Url', accessor: 'url' },
+    { header: 'Page Url', render: links },
     { header: 'Page Category', accessor: 'page_type' },
-    { header: 'Actions', accessor: 'action', render: buttons },
+    { header: 'Actions', render: buttons },
   ];
   return (
     <Container>

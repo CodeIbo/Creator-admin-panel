@@ -88,11 +88,22 @@ function Blogs() {
   const linkToArticles = (row: BlogAttributes) => (
     <Link to={row.blog_key}>Articles</Link>
   );
+  const links = (row: BlogAttributes) => {
+    return (
+      <a
+        href={`${process.env.REACT_APP_FRONT_URL}/blog/${row.url}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {row.url}
+      </a>
+    );
+  };
 
   const columns: Column<BlogAttributes>[] = [
     { header: 'Blog Name', accessor: 'name' },
     { header: 'Articles', accessor: 'article_url', render: linkToArticles },
-    { header: 'Blog Url', accessor: 'url' },
+    { header: 'Blog Url', render: links },
     { header: 'Actions', accessor: 'action', render: buttons },
   ];
 

@@ -13,7 +13,7 @@ import { AnyObject } from 'yup';
 
 export interface Column<T> {
   header: string;
-  accessor: keyof T | string;
+  accessor?: keyof T | string;
   render?: (row: T, value?: any) => JSX.Element;
 }
 

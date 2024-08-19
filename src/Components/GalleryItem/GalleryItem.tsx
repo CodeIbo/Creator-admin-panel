@@ -35,7 +35,7 @@ export default function GalleryItem({
       <CardActions sx={{ justifyContent: 'flex-end' }}>
         <LinkButton
           component={Link}
-          to={`${process.env.REACT_APP_BASE_API_URL}/image/${image.id}`}
+          to={`${process.env.REACT_APP_BASE_API_URL}/api/image/${image.id}`}
           target="_blank"
           buttonText="link"
           rel="noopener"

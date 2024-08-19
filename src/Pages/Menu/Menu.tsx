@@ -1,12 +1,13 @@
+/* eslint-disable no-param-reassign */
 import { DropResult } from 'react-beautiful-dnd';
 import { useState } from 'react';
-import { Container } from '@mui/material';
+import { Box, CircularProgress, Container } from '@mui/material';
 
 import { useMutation, useQuery } from 'react-query';
+import _ from 'lodash';
 
 import { MenuAttributes } from '../../Models/Api/menu.model';
 import LinkButton from '../../Components/LinkButton/LinkButton';
-import DraggableArea from '../../Components/DraggableArea/DraggableArea';
 import {
   AxiosErrorData,
   AxiosResponseBase,
@@ -15,6 +16,8 @@ import {
 import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
 import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 import fetchAxios from '../../Services/Api/fetchAxios';
+import DraggableArea from '../../Components/DraggableArea/DraggableArea';
+import MenuItems from '../../Components/DraggableArea/Items/MenuItem';
 
 function Menu() {
   const [items, setItems] = useState<MenuAttributes[] | []>([]);
@@ -45,6 +48,9 @@ function Menu() {
         data: { menuItems },
       }),
     {
+      onMutate(menuItems: MenuAttributes[]) {
+        setItems(menuItems);
+      },
       onSuccess: (response: AxiosResponseBase) =>
         triggerAlert(response.message, 'success'),
     }
@@ -75,28 +81,21 @@ function Menu() {
     deletetMenu.mutate(id);
   };
 
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-    if (!destination) {
-      return;
-    }
-    if (destination.index === source.index) {
-      return;
-    }
+  const sortData = (
+    itemsSort: MenuAttributes[],
+    parentId: string | null = null
+  ): MenuAttributes[] => {
+    return itemsSort.map((item, index): MenuAttributes => {
+      const updatedItem: MenuAttributes = {
+        ...item,
+        menu_order: index,
+        parent_id: parentId,
+        children:
+          item.children.length > 0 ? sortData(item.children, item.id) : [],
+      };
 
-    const newItems = Array.from(items);
-    const [removed] = newItems.splice(source.index, 1);
-    newItems.splice(destination.index, 0, removed);
-    const updatedMenuIndexArray = newItems.map((menuItem, index) => {
-      if (menuItem.menu_order === index) {
-        return menuItem;
-      }
-      const copyMenuItem = menuItem;
-      copyMenuItem.menu_order = index;
-      return copyMenuItem;
+      return updatedItem;
     });
-    setItems(updatedMenuIndexArray);
-    postMenu.mutate(updatedMenuIndexArray);
   };
   return (
     <Container>
@@ -112,21 +111,22 @@ function Menu() {
           textAlign: 'center',
         }}
       />
-      <DraggableArea
-        objectNames={{
-          id: 'id',
-          label: 'label',
+      <DraggableArea<MenuAttributes>
+        initialItems={items}
+        renderItem={({ item, collapseIcon }) => (
+          <MenuItems
+            item={item as MenuAttributes}
+            collapseIcon={collapseIcon}
+            deleteHandler={deleteHandler}
+          />
+        )}
+        onChange={(updatedItems) => {
+          const sortedData = sortData(updatedItems, null);
+          postMenu.mutate(sortedData);
         }}
-        items={items}
-        onDragEnd={onDragEnd}
-        configButtons={{
-          edit: true,
-          delete: true,
-        }}
-        deleteHandler={deleteHandler}
+        idProp="id"
         isLoading={isLoading}
         error={error}
-        textWhenEmptyArray="Add New Menu Items"
       />
     </Container>
   );

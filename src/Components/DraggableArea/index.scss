@@ -1,0 +1,77 @@
+.nestable {
+  position: relative;
+
+  .nestable-list {
+    margin: 0;
+    padding: 0 0 0 3rem;
+    list-style-type: none;
+  }
+
+  > .nestable-list {
+    padding: 0;
+  }
+}
+
+.nestable-item,
+.nestable-item-copy {
+  margin: 0.5rem 0 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  .nestable-list {
+    margin-top: 0.5rem;
+  }
+
+  &--children-no-collapse {
+    .nestable-item-icon {
+      cursor: inherit;
+    }
+  }
+}
+
+.nestable-item {
+  position: relative;
+  &:hover {
+    cursor: grab;
+  }
+  &.is-dragging {
+    cursor: grabbing;
+
+    .nestable-list {
+      pointer-events: none;
+    }
+
+    * {
+      opacity: 0;
+    }
+
+    &:before {
+      content: ' ';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: skyblue;
+      border: 1px dashed steelblue;
+      border-radius: 5px;
+    }
+  }
+}
+
+.nestable-drag-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+
+  > .nestable-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+  }
+}

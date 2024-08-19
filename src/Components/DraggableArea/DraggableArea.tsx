@@ -1,56 +1,51 @@
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DroppableProvided,
-  DraggableProvided,
-  DraggableStateSnapshot,
-  DropResult,
-} from 'react-beautiful-dnd';
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  CircularProgress,
-  Container,
-  Link,
+  ListItemButton,
   List,
-  ListItem,
-  ListItemText,
-  Paper,
+  Box,
+  CircularProgress,
   Typography,
 } from '@mui/material';
-import { blue } from '@mui/material/colors';
-import _ from 'lodash';
-
-import LinkButton from '../LinkButton/LinkButton';
+import { ReactNode } from 'react';
+import Nestable, { type Item } from 'react-nestable';
+import './index.scss';
 import { AxiosErrorData } from '../../Models/AxiosResponse';
 
-function DraggableArea({
-  objectNames,
-  items,
-  onDragEnd,
-  deleteHandler,
-  configButtons,
-  error,
-  isLoading,
-  textWhenEmptyArray,
-}: {
-  objectNames: {
-    id: string;
-    label: string;
-  };
-  items: any[];
-  onDragEnd: (result: DropResult) => void;
-  configButtons: {
-    edit?: boolean;
-    delete?: boolean;
-  };
+interface DraggableAreaProps<T> {
+  initialItems: T[] | [];
+  renderItem: (params: {
+    item: Item;
+    index: number;
+    depth: number;
+    isDraggable: boolean;
+    collapseIcon: ReactNode;
+    handler: ReactNode;
+  }) => ReactNode;
+  onChange: (updatedItems: T[]) => void;
+  idProp: string;
+  maxDepth?: number;
   isLoading: boolean;
   error: AxiosErrorData | null;
-  deleteHandler?: (id: string) => void;
-  textWhenEmptyArray: string;
-}) {
+}
+
+function DraggableArea<T extends Item>({
+  initialItems,
+  renderItem,
+  onChange,
+  idProp,
+  maxDepth = 2,
+  isLoading,
+  error,
+}: DraggableAreaProps<T>) {
+  const renderCollapseIcon = ({
+    isCollapsed,
+  }: {
+    isCollapsed: boolean;
+  }): JSX.Element => (
+    <ListItemButton>
+      {isCollapsed ? <ExpandMore /> : <ExpandLess />}
+    </ListItemButton>
+  );
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
@@ -58,122 +53,22 @@ function DraggableArea({
       </Box>
     );
   }
-
-  if (items.length === 0) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          marginTop: 2,
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <Typography variant="h4" textAlign="center">
-          {textWhenEmptyArray}
-        </Typography>
-        <LinkButton
-          to="new"
-          buttonText="New Menu Item"
-          color="primary"
-          variant="contained"
-          sx={{
-            maxWidth: '10rem',
-          }}
-        />
-      </Box>
-    );
-  }
-
   if (error) {
     return (
       <Typography color="error">Error loading data: {error.message}</Typography>
     );
   }
   return (
-    <Container>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppable">
-          {(droppableProvided: DroppableProvided) => (
-            <List
-              component={Paper}
-              ref={droppableProvided.innerRef}
-              {...droppableProvided.droppableProps}
-            >
-              {items.map((item, index) => (
-                <Draggable key={item.id} draggableId={item.id} index={index}>
-                  {(
-                    draggableProvided: DraggableProvided,
-                    snapshot: DraggableStateSnapshot
-                  ) => (
-                    <ListItem
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.draggableProps}
-                      {...draggableProvided.dragHandleProps}
-                      style={{
-                        ...draggableProvided.draggableProps.style,
-                        backgroundColor: snapshot.isDragging
-                          ? blue[200]
-                          : '#fff',
-                        boxShadow: snapshot.isDragging
-                          ? '0 3px 5px rgba(0,0,0,0.2)'
-                          : 'none',
-                        transition: !snapshot.isDropAnimating
-                          ? 'background-color 500ms ease'
-                          : undefined,
-                        transitionDelay: !snapshot.isDropAnimating
-                          ? '0.2s'
-                          : undefined,
-                      }}
-                      secondaryAction={
-                        <ButtonGroup sx={{ gap: 1 }}>
-                          {configButtons.edit && (
-                            <LinkButton
-                              to={`edit/${item.id}`}
-                              component={Link}
-                              buttonText="edit"
-                              color="primary"
-                              variant="contained"
-                            />
-                          )}
-                          {configButtons.delete && deleteHandler && (
-                            <Button
-                              color="error"
-                              variant="contained"
-                              onClick={() => {
-                                deleteHandler(item[objectNames.id]);
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          )}
-                        </ButtonGroup>
-                      }
-                    >
-                      <ListItemText
-                        primary={
-                          <Typography
-                            variant="subtitle1"
-                            color="primary"
-                            fontWeight="500"
-                          >
-                            {_.startCase(item[objectNames.label])}
-                          </Typography>
-                        }
-                      />
-                    </ListItem>
-                  )}
-                </Draggable>
-              ))}
-              {droppableProvided.placeholder}
-            </List>
-          )}
-        </Droppable>
-      </DragDropContext>
-    </Container>
+    <List>
+      <Nestable
+        items={initialItems}
+        renderItem={renderItem}
+        renderCollapseIcon={renderCollapseIcon}
+        onChange={({ items }) => onChange(items as T[])}
+        idProp={idProp}
+        maxDepth={maxDepth}
+      />
+    </List>
   );
 }
-
 export default DraggableArea;

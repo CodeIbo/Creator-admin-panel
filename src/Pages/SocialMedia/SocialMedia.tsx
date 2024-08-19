@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Button, Container, Typography } from '@mui/material';
 import { useMutation, useQuery } from 'react-query';
 import _ from 'lodash';
-import DraggableArea from '../../Components/DraggableArea/DraggableArea';
 import { SocialMediaAttributes } from '../../Models/Api/socialMedia.model';
 import useAxiosPrivate from '../../Services/Hooks/useAxiosPrivate';
 import {
@@ -13,6 +12,8 @@ import {
 import { useAlert } from '../../Services/Context/Alert/AlertProvider';
 import Modal from '../../Components/Modal/Modal';
 import fetchAxios from '../../Services/Api/fetchAxios';
+import DraggableArea from '../../Components/DraggableArea/DraggableArea';
+import SocialMediaItem from '../../Components/DraggableArea/Items/SocialMediaItem';
 
 function SocialMedia() {
   const [items, setItems] = useState<SocialMediaAttributes[] | []>([]);
@@ -39,7 +40,21 @@ function SocialMedia() {
         url: 'social-media/sort',
         data: { socialMedia: socialMediaItems },
       }),
-    { onSuccess: (response) => triggerAlert(response.message, 'success') }
+    {
+      onSuccess: (response) => triggerAlert(response.message, 'success'),
+      onMutate(socialMediaItems: SocialMediaAttributes[]) {
+        setItems((prev) =>
+          _.orderBy(
+            prev.map((item) => {
+              const updatedItem = _.find(socialMediaItems, { id: item.id });
+              return updatedItem || item;
+            }),
+            ['order'],
+            ['asc']
+          )
+        );
+      },
+    }
   );
   const updateSocialMedia = useMutation(
     async ({ id, obj }: { id: string; obj: Partial<SocialMediaAttributes> }) =>
@@ -88,16 +103,16 @@ function SocialMedia() {
     }
   };
 
-  const deleteHandler = (id: string) => {
-    smRemoveAdd(id, 0);
-  };
-
   const openModal = () => {
     setModal(true);
   };
 
-  const addHandler = (id: string) => {
-    smRemoveAdd(id, 1);
+  const sortData = (itemsSort: SocialMediaAttributes[]) => {
+    const sortedItems = itemsSort.map((item, index) => ({
+      ...item,
+      order: index,
+    }));
+    sortSocialMedia.mutate(sortedItems);
   };
 
   return (
@@ -129,7 +144,7 @@ function SocialMedia() {
               <Button
                 variant="contained"
                 color="success"
-                onClick={() => addHandler(item.id)}
+                onClick={() => smRemoveAdd(item.id, 1)}
               >
                 +
               </Button>
@@ -148,21 +163,19 @@ function SocialMedia() {
       >
         Add Social Media
       </Button>
-      <DraggableArea
-        objectNames={{
-          id: 'id',
-          label: 'name',
-        }}
-        items={items.filter((v) => v.available)}
-        onDragEnd={onDragEnd}
-        configButtons={{
-          edit: true,
-          delete: true,
-        }}
+      <DraggableArea<SocialMediaAttributes>
         isLoading={isLoading}
+        initialItems={items.filter((v) => v.available)}
+        renderItem={({ item }) => (
+          <SocialMediaItem
+            item={item as SocialMediaAttributes}
+            deleteHandler={(id) => smRemoveAdd(id, 0)}
+          />
+        )}
+        maxDepth={1}
+        idProp="id"
+        onChange={(updatedItems) => sortData(updatedItems)}
         error={error}
-        textWhenEmptyArray="Call to admin to add :("
-        deleteHandler={deleteHandler}
       />
     </Container>
   );

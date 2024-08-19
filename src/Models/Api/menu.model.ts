@@ -5,5 +5,8 @@ export interface MenuAttributes {
   label: string;
   parent_id: string | null;
   scroll_target: string | null;
+  children: Array<MenuAttributes>;
   created_at: string;
+  url: string;
+  page_category: string;
 }
